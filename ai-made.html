@@ -1,1 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Made</title>
+    <style>
+      :root {
+        --bg-1: #090b14;
+        --bg-2: #111a2d;
+        --card: rgba(17, 24, 39, 0.78);
+        --card-border: rgba(148, 163, 184, 0.2);
+        --text: #e2e8f0;
+        --muted: #9aa8bd;
+        --accent: #8b5cf6;
+        --accent-2: #22d3ee;
+        --accent-3: #f59e0b;
+        --surface: #f8fafc;
+        --shadow: rgba(0, 0, 0, 0.28);
+      }
 
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Inter, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(139, 92, 246, 0.22), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.18), transparent 30%),
+          linear-gradient(135deg, var(--bg-1), var(--bg-2));
+        color: var(--text);
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+      }
+
+      .app {
+        width: min(1300px, 100%);
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid var(--card-border);
+        border-radius: 28px;
+        box-shadow: 0 20px 60px var(--shadow);
+        overflow: hidden;
+        backdrop-filter: blur(14px);
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 28px;
+        border-bottom: 1px solid var(--card-border);
+        background: rgba(15, 23, 42, 0.35);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+        font-size: 1.1rem;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #34d399;
+        box-shadow: 0 0 12px rgba(52, 211, 153, 0.9);
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 320px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        padding: 24px 20px 20px;
+        border-right: 1px solid var(--card-border);
+        background: rgba(15, 23, 42, 0.16);
+      }
+
+      .panel {
+        background: rgba(15, 23, 42, 0.56);
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 18px;
+      }
+
+      .panel h3 {
+        margin: 0 0 12px 0;
+        font-size: 0.82rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.8);
+        color: var(--text);
+        padding: 12px 14px;
+        font: inherit;
+        outline: none;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      button {
+        border: none;
+        cursor: pointer;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font: inherit;
+        transition: transform 0.18s ease, opacity 0.18s ease;
+      }
+
+      button:hover { transform: translateY(-1px); }
+      button:active { transform: translateY(0); }
+
+      .primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+        font-weight: 600;
+      }
+
+      .secondary {
+        background: rgba(148, 163, 184, 0.12);
+        color: var(--text);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+      }
+
+      .quick-prompts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        background: rgba(139, 92, 246, 0.12);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        border-radius: 999px;
+        color: #ddd6fe;
+        padding: 7px 10px;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+
+      .tool-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .tool {
+        flex: 1 1 40%;
+        background: rgba(148, 163, 184, 0.06);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        color: var(--text);
+        padding: 9px 10px;
+        border-radius: 10px;
+      }
+
+      .color-picker {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .swatch {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.24);
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+        cursor: pointer;
+      }
+
+      .swatch.active {
+        transform: scale(1.12);
+        border-color: white;
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+      }
+
+      .canvas-panel {
+        padding: 24px;
+      }
+
+      .canvas-shell {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.98));
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 22px;
+        padding: 16px;
+        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
+      }
+
+      .canvas-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .range-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #334155;
+        font-size: 0.8rem;
+      }
+
+      input[type="range"] {
+        accent-color: var(--accent);
+      }
+
+      canvas {
+        width: 100%;
+        height: 620px;
+        display: block;
+        background: linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,1));
+        border-radius: 16px;
+        border: 1px solid rgba(148,163,184,0.25);
+        box-shadow: inset 0 0 0 1px rgba(148,163,184,0.08);
+        cursor: crosshair;
+      }
+
+      @media (max-width: 980px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--card-border);
+        }
+
+        canvas {
+          height: 420px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">✦</div>
+          <span>AI + ME</span>
+        </div>
+        <div class="status">
+          <span class="dot"></span>
+          <span>Canvas ready</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar">
+          <section class="panel">
+            <h3>Creative prompt</h3>
+            <textarea id="promptInput" placeholder="Describe the idea you want to explore...">A neon city sunrise, floating ideas, and a calm human hand guiding the future.</textarea>
+            <div class="button-row">
+              <button class="primary" id="generateIdeaBtn">Generate idea</button>
+              <button class="secondary" id="writeToCanvasBtn">Write to canvas</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>Quick sparks</h3>
+            <div class="quick-prompts">
+              <button class="chip">Cyber garden</button>
+              <button class="chip">Future coffee</button>
+              <button class="chip">Dream city</button>
+              <button class="chip">Quiet magic</button>
+              <button class="chip">Minimal hero</button>
+              <button class="chip">Moon lab</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>Tools</h3>
+            <div class="tool-stack">
+              <button class="tool" id="penTool">Pen</button>
+              <button class="tool" id="eraserTool">Eraser</button>
+            </div>
+            <div class="color-picker" id="colorPicker">
+              <span class="swatch active" data-color="#111827" style="background:#111827"></span>
+              <span class="swatch" data-color="#8b5cf6" style="background:#8b5cf6"></span>
+              <span class="swatch" data-color="#22d3ee" style="background:#22d3ee"></span>
+              <span class="swatch" data-color="#f59e0b" style="background:#f59e0b"></span>
+              <span class="swatch" data-color="#10b981" style="background:#10b981"></span>
+              <span class="swatch" data-color="#ef4444" style="background:#ef4444"></span>
+            </div>
+          </section>
+        </aside>
+
+        <section class="canvas-panel">
+          <div class="canvas-shell">
+            <div class="canvas-toolbar">
+              <div class="toolbar-actions">
+                <button class="secondary" id="clearBtn">Clear</button>
+                <button class="primary" id="saveBtn">Save PNG</button>
+              </div>
+              <div class="range-wrap">
+                <label for="brushSize">Brush</label>
+                <input id="brushSize" type="range" min="2" max="30" value="6" />
+              </div>
+            </div>
+            <canvas id="drawingCanvas" width="1200" height="620"></canvas>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('drawingCanvas');
+      const ctx = canvas.getContext('2d');
+      const promptInput = document.getElementById('promptInput');
+      const generateIdeaBtn = document.getElementById('generateIdeaBtn');
+      const writeToCanvasBtn = document.getElementById('writeToCanvasBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const saveBtn = document.getElementById('saveBtn');
+      const brushSizeInput = document.getElementById('brushSize');
+      const penTool = document.getElementById('penTool');
+      const eraserTool = document.getElementById('eraserTool');
+      const swatches = [...document.querySelectorAll('.swatch')];
+      const chips = [...document.querySelectorAll('.chip')];
+
+      let drawing = false;
+      let currentColor = '#111827';
+      let brushSize = Number(brushSizeInput.value);
+      let currentTool = 'pen';
+
+      function setCanvasBackground() {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function setupCanvas() {
+        const devicePixelRatio = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * devicePixelRatio;
+        canvas.height = rect.height * devicePixelRatio;
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        setCanvasBackground();
+      }
+
+      function getPointerPosition(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+        };
+      }
+
+      function startDrawing(event) {
+        drawing = true;
+        const pos = getPointerPosition(event);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function draw(event) {
+        if (!drawing) return;
+        const pos = getPointerPosition(event);
+        ctx.lineWidth = brushSize;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
+
+      function stopDrawing() {
+        drawing = false;
+        ctx.beginPath();
+      }
+
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        setCanvasBackground();
+      }
+
+      function saveCanvas() {
+        const link = document.createElement('a');
+        link.download = 'ai-made-canvas.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
+
+      function updateToolButtons() {
+        penTool.style.background = currentTool === 'pen' ? 'rgba(139, 92, 246, 0.14)' : 'rgba(148, 163, 184, 0.06)';
+        eraserTool.style.background = currentTool === 'eraser' ? 'rgba(34, 211, 238, 0.14)' : 'rgba(148, 163, 184, 0.06)';
+      }
+
+      const ideaBank = [
+        'A quiet sunrise over a city of floating ideas.',
+        'A lone explorer meets an elegant robot in a neon garden.',
+        'The future is built with calm hands and brave imagination.',
+        'A tiny studio for impossible dreams and everyday wonder.',
+        'An ocean of data turning into warm human stories.',
+        'A hidden library where ideas bloom in the dark.'
+      ];
+
+      function generateIdea() {
+        const nextIdea = ideaBank[Math.floor(Math.random() * ideaBank.length)];
+        promptInput.value = nextIdea;
+      }
+
+      function writeIdeaToCanvas() {
+        const text = promptInput.value.trim();
+        if (!text) return;
+
+        ctx.font = '700 26px Inter, sans-serif';
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+        ctx.textAlign = 'center';
+        ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(canvas.width * 0.18, canvas.height * 0.18, canvas.width * 0.64, canvas.height * 0.32);
+      }
+
+      canvas.addEventListener('pointerdown', startDrawing);
+      canvas.addEventListener('pointermove', draw);
+      canvas.addEventListener('pointerup', stopDrawing);
+      canvas.addEventListener('pointerleave', stopDrawing);
+
+      generateIdeaBtn.addEventListener('click', generateIdea);
+      writeToCanvasBtn.addEventListener('click', writeIdeaToCanvas);
+      clearBtn.addEventListener('click', clearCanvas);
+      saveBtn.addEventListener('click', saveCanvas);
+
+      brushSizeInput.addEventListener('input', (event) => {
+        brushSize = Number(event.target.value);
+      });
+
+      penTool.addEventListener('click', () => {
+        currentTool = 'pen';
+        updateToolButtons();
+      });
+
+      eraserTool.addEventListener('click', () => {
+        currentTool = 'eraser';
+        updateToolButtons();
+      });
+
+      swatches.forEach((swatch) => {
+        swatch.addEventListener('click', () => {
+          currentColor = swatch.dataset.color;
+          swatches.forEach((item) => item.classList.toggle('active', item === swatch));
+        });
+      });
+
+      chips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          promptInput.value = chip.textContent.trim();
+        });
+      });
+
+      updateToolButtons();
+      setupCanvas();
+      generateIdea();
+    </script>
+  </body>
+</html>
