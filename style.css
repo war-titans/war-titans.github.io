@@ -36,5 +36,9 @@ ol {
 }  
 button {
  background-color: red;
- color: black
+ color: black;
 }
+/*Classes here!*/
+.large-button {
+  padding: 16px 32px; 
+  font-size: 18px;
