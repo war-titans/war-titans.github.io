@@ -32,9 +32,7 @@
         overflow: auto;
       }
 
-      body {
-        display: flex;
-      }
+      body { display: flex; }
 
       .home-menu {
         display: none;
@@ -108,7 +106,7 @@
 
       .studio {
         display: none;
-        grid-template-rows: 52px minmax(0, 1fr) auto;
+        grid-template-rows: 52px minmax(0, 1fr);
         width: 100vw;
         height: 100vh;
         background: var(--panel);
@@ -140,6 +138,12 @@
         font-weight: 600;
         font-size: 0.75rem;
         cursor: pointer;
+        transition: 0.15s ease;
+      }
+
+      .topbar-home-btn:hover {
+        background: rgba(34, 211, 238, 0.2);
+        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2);
       }
 
       .brand {
@@ -164,1314 +168,517 @@
         font-size: 0.7rem;
       }
 
-      .topbar-right {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: var(--muted);
-        font-size: 0.8rem;
-      }
-
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--green);
-        box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
-      }
-
       .workspace {
         display: grid;
-        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(200px, 240px);
+        grid-template-columns: 280px minmax(0, 1fr) 220px;
+        height: 100%;
         gap: 1px;
-        min-height: 0;
         background: var(--line);
       }
 
-      .sidebar, .inspector {
-        background: rgba(15, 23, 42, 0.82);
-        overflow-y: auto;
-        padding: 16px;
-        min-height: 0;
-      }
-
-      .inspector { border-left: 1px solid var(--line); }
-
-      .canvas-area {
-        display: grid;
-        grid-template-rows: minmax(0, 1fr) auto;
-        min-height: 0;
-        background: rgba(17, 24, 39, 0.7);
-      }
-
-      .canvas-viewport {
-        position: relative;
-        min-height: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background:
-          linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-          linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(20, 28, 44, 0.8));
-        background-size: 24px 24px, 24px 24px, 100% 100%;
-      }
-
-      canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-        border: none;
-        outline: none;
-      }
-
-      .game-container {
-        display: none;
-        width: 100%;
-        height: 100%;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, var(--bg), var(--bg-2));
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 500;
-      }
-
-      .game-container.active { display: flex; }
-
-      .game-header {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        right: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .game-content {
-        text-align: center;
+      .sidebar {
+        background: rgba(15, 23, 42, 0.95);
         padding: 20px;
-        max-width: 90vw;
-        margin-top: 60px;
+        overflow-y: auto;
+        border-right: 1px solid var(--line);
       }
 
-      .game-title {
-        font-size: 2.5rem;
+      .sidebar-section {
+        margin-bottom: 30px;
+      }
+
+      .sidebar-title {
+        font-size: 0.7rem;
         font-weight: 700;
-        margin-bottom: 10px;
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-bottom: 12px;
       }
 
-      .game-area {
-        background: rgba(15, 23, 42, 0.9);
-        border: 2px solid var(--purple);
-        border-radius: 16px;
-        padding: 30px;
-        width: 100%;
-        max-width: 600px;
-        margin: 20px 0;
-        min-height: 300px;
+      .shape-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .shape-btn {
+        padding: 12px;
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        background: rgba(139, 92, 246, 0.05);
+        color: var(--text);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative;
-        cursor: pointer;
-      }
-
-      .game-score {
-        font-size: 1.5rem;
-        color: var(--cyan);
-        margin-bottom: 20px;
-      }
-
-      .back-btn, .home-game-btn {
-        padding: 12px 24px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(139, 92, 246, 0.12);
-        color: var(--text);
+        min-height: 50px;
         font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        margin-top: 20px;
       }
 
-      .home-game-btn {
-        background: rgba(34, 211, 238, 0.12);
-        border-color: rgba(34, 211, 238, 0.3);
-        color: var(--cyan);
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        margin-top: 0;
+      .shape-btn:hover {
+        background: rgba(139, 92, 246, 0.15);
+        border-color: var(--purple);
+        transform: translateY(-2px);
       }
 
-      .game-button-group {
+      .shape-btn.active {
+        background: rgba(139, 92, 246, 0.3);
+        border-color: var(--cyan);
+        box-shadow: 0 0 12px rgba(34, 211, 238, 0.3);
+      }
+
+      .color-picker {
         display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-top: 20px;
+        gap: 8px;
+        margin-top: 12px;
       }
 
-      .snake-grid {
-        display: grid;
-        grid-template-columns: repeat(10, 30px);
-        gap: 2px;
-        margin: 0 auto;
-      }
-
-      .snake-cell {
+      .color-option {
         width: 30px;
         height: 30px;
-        background: rgba(148, 163, 184, 0.2);
-        border-radius: 4px;
-        border: 1px solid var(--line);
-      }
-
-      .snake-cell.snake {
-        background: var(--green);
-        box-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
-      }
-
-      .snake-cell.food {
-        background: var(--red);
-        box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
-      }
-
-      .memory-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 80px);
-        gap: 10px;
-        margin: 0 auto;
-      }
-
-      .memory-card {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        border: none;
-        border-radius: 8px;
+        border-radius: 6px;
+        border: 2px solid transparent;
         cursor: pointer;
-        font-size: 2rem;
-        font-weight: 700;
         transition: all 0.15s ease;
-        display: grid;
-        place-items: center;
       }
 
-      .memory-card.flipped {
-        background: rgba(139, 92, 246, 0.3);
+      .color-option:hover {
+        transform: scale(1.1);
       }
 
-      .flappy-bird {
-        position: absolute;
-        left: 20px;
-        width: 24px;
-        height: 24px;
-        background: var(--cyan);
-        border-radius: 50%;
-        box-shadow: 0 0 15px rgba(34, 211, 238, 0.8);
+      .color-option.active {
+        border-color: var(--cyan);
+        box-shadow: 0 0 12px currentColor;
       }
 
-      .pipe {
-        position: absolute;
-        background: var(--green);
-        width: 60px;
-        box-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
-      }
-
-      .panel-title {
-        font-size: 0.72rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin: 0 0 12px 0;
-        font-weight: 700;
-      }
-
-      .section {
-        margin-bottom: 18px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .section:last-child { border-bottom: none; }
-
-      label {
-        display: block;
-        font-size: 0.72rem;
-        color: var(--muted);
-        margin-bottom: 6px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      input[type="text"],
-      input[type="number"],
-      input[type="range"],
-      input[type="color"],
-      select {
-        width: 100%;
-        padding: 8px 10px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(148, 163, 184, 0.06);
-        color: var(--text);
-        font-family: inherit;
-        font-size: 0.85rem;
-        margin-bottom: 10px;
-      }
-
-      input[type="range"] { accent-color: var(--purple); }
-
-      button {
-        padding: 10px 12px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(139, 92, 246, 0.12);
-        color: var(--text);
-        font-weight: 600;
-        font-size: 0.78rem;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom: 8px;
-      }
-
-      button.secondary {
-        background: rgba(52, 211, 153, 0.08);
-        border-color: rgba(52, 211, 153, 0.2);
-      }
-
-      .guide {
-        background: rgba(34, 211, 238, 0.06);
-        border: 1px solid rgba(34, 211, 238, 0.15);
-        border-radius: 8px;
-        padding: 10px;
-        font-size: 0.75rem;
-        line-height: 1.5;
-        color: #bae6fd;
-        margin-bottom: 12px;
-      }
-
-      .guide-title {
-        font-weight: 700;
-        color: var(--cyan);
-        margin-bottom: 6px;
-      }
-
-      .lesson-box {
-        background: rgba(139, 92, 246, 0.08);
-        border: 1px solid rgba(139, 92, 246, 0.18);
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 12px;
-      }
-
-      .lesson-box strong {
-        display: block;
-        font-size: 0.75rem;
-        color: #ddd6fe;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 6px;
-      }
-
-      .timeline {
-        background: rgba(15, 23, 42, 0.9);
-        border-top: 1px solid var(--line);
-        padding: 12px;
-        min-height: 0;
-        max-height: 180px;
-      }
-
-      .timeline-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 10px;
-      }
-
-      .timeline-controls {
-        display: flex;
-        gap: 8px;
-      }
-
-      .play-btn {
-        width: 32px !important;
-        height: 32px !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        border-radius: 6px;
-        display: grid;
-        place-items: center;
-        font-size: 0.7rem;
-      }
-
-      .timeline-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 8px;
-      }
-
-      .timeline-label {
-        font-size: 0.72rem;
-        color: var(--muted);
-        margin: 0;
-        white-space: nowrap;
-      }
-
-      .timeline-bar {
-        flex: 1;
-        height: 4px;
-        background: rgba(148, 163, 184, 0.12);
-        border-radius: 2px;
-        position: relative;
-        cursor: pointer;
-      }
-
-      .timeline-progress {
-        height: 100%;
-        background: linear-gradient(90deg, var(--purple), var(--cyan));
-        border-radius: 2px;
-        width: 0%;
-      }
-
-      .keyframe-strip {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        margin-top: 10px;
-      }
-
-      .keyframe {
-        width: 22px;
-        height: 22px;
-        border-radius: 4px;
-        border: 1px solid var(--line);
-        background: rgba(139, 92, 246, 0.18);
-        color: var(--text);
-        font-size: 0.6rem;
-        display: grid;
-        place-items: center;
-        padding: 0;
-        margin: 0;
-        cursor: pointer;
-      }
-
-      .keyframe.active {
-        background: var(--purple);
-        box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
-      }
-
-      .value-box {
-        padding: 8px 10px;
-        background: rgba(148, 163, 184, 0.08);
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        text-align: center;
-        font-size: 0.75rem;
-        color: var(--muted);
-        margin-top: 6px;
-      }
-
-      .value-box strong {
-        display: block;
-        color: var(--text);
-        font-size: 0.9rem;
-        margin-bottom: 2px;
-      }
-
-      .menu-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+      .canvas-area {
         background: linear-gradient(135deg, var(--bg), var(--bg-2));
-        z-index: 400;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #drawingCanvas {
+        display: block;
+        cursor: crosshair;
+        background: linear-gradient(135deg, var(--bg), var(--bg-2));
+      }
+
+      .right-panel {
+        background: rgba(15, 23, 42, 0.95);
         padding: 20px;
-      }
-
-      .menu-overlay.active { display: flex; }
-
-      .menu-content { text-align: center; }
-
-      .menu-title {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 30px;
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .menu-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        overflow-y: auto;
+        border-left: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
         gap: 20px;
-        max-width: 700px;
-        margin: 0 auto 30px;
       }
 
-      .menu-btn {
-        padding: 30px 20px;
-        border: 2px solid var(--purple);
-        border-radius: 12px;
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .control-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      .control-btn {
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
         background: rgba(139, 92, 246, 0.1);
         color: var(--text);
-        font-weight: 700;
-        font-size: 1.1rem;
+        font-weight: 600;
+        font-size: 0.8rem;
         cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
-        margin: 0;
+        transition: all 0.15s ease;
       }
 
-      .menu-icon { font-size: 2.5rem; }
+      .control-btn:hover {
+        background: rgba(139, 92, 246, 0.2);
+        border-color: var(--purple);
+      }
 
-      @media (max-width: 980px) {
-        html, body { overflow: visible; }
+      .control-btn.danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: var(--red);
+      }
 
-        .studio {
-          grid-template-rows: 52px minmax(0, 1fr) auto;
-          height: auto;
-          min-height: 100vh;
-        }
+      .control-btn.danger:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: var(--red);
+      }
 
-        .workspace { display: block; }
+      .slider-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
 
-        .sidebar, .inspector {
-          width: 100%;
-          border-left: none;
-          border-bottom: 1px solid var(--line);
-        }
+      input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+      }
 
-        .canvas-area {
-          min-height: 420px;
-          height: 420px;
-        }
+      .slider-value {
+        font-size: 0.8rem;
+        color: var(--cyan);
+        text-align: center;
+      }
+
+      .back-btn-top {
+        padding: 8px 14px;
+        border: 1px solid var(--red);
+        border-radius: 6px;
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--red);
+        font-weight: 600;
+        font-size: 0.7rem;
+        cursor: pointer;
+        transition: 0.15s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .back-btn-top:hover {
+        background: rgba(239, 68, 68, 0.2);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
       }
     </style>
   </head>
   <body>
+    <!-- HOME MENU -->
     <div class="home-menu active" id="homeMenu">
       <div class="home-content">
-        <h1 class="home-title">✨ Creative Studio</h1>
-        <p class="home-subtitle">Choose what you want to do</p>
+        <div class="home-title">✨ Studio & Games</div>
+        <div class="home-subtitle">Create, Draw & Play</div>
         <div class="home-grid">
-          <button class="home-btn" id="toStudioBtn">
-            <div class="home-icon">🎨</div>
-            <div>Animation Studio</div>
+          <button class="home-btn" onclick="goToStudio()">
+            <span class="home-icon">🎨</span>
+            Drawing Studio
           </button>
-          <button class="home-btn" id="toGamesBtn">
-            <div class="home-icon">🎮</div>
-            <div>Play Games</div>
+          <button class="home-btn" onclick="goToFlappyBird()">
+            <span class="home-icon">🐦</span>
+            Flappy Bird
+          </button>
+          <button class="home-btn" onclick="goToSnake()">
+            <span class="home-icon">🐍</span>
+            Snake Game
           </button>
         </div>
       </div>
     </div>
 
-    <div class="menu-overlay" id="menuOverlay">
-      <div class="menu-content">
-        <h1 class="menu-title">🎮 Play Games</h1>
-        <div class="menu-grid" id="menuGrid"></div>
-        <div class="game-button-group">
-          <button class="back-btn" id="menuBackBtn">← Back</button>
-          <button class="back-btn" id="menuHomeBtn" style="background: rgba(34, 211, 238, 0.12); border-color: rgba(34, 211, 238, 0.3); color: var(--cyan);">🏠 Home</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="game-container" id="gameContainer">
-      <div class="game-header">
-        <div></div>
-        <button class="home-game-btn" id="gameHomeBtn">🏠 Home</button>
-      </div>
-      <div class="game-content">
-        <h2 class="game-title" id="gameTitle">Game</h2>
-        <div class="game-score" id="gameScore">Score: 0</div>
-        <div class="game-area" id="gameArea"></div>
-        <div class="game-button-group">
-          <button class="back-btn" id="gameBackBtn">← Back</button>
-          <button class="back-btn" id="gameHomeBtn2" style="background: rgba(34, 211, 238, 0.12); border-color: rgba(34, 211, 238, 0.3); color: var(--cyan);">🏠 Home</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="studio" id="studio">
-      <header class="topbar">
+    <!-- STUDIO -->
+    <div class="studio active" id="studioView">
+      <div class="topbar">
         <div class="topbar-left">
-          <button class="topbar-home-btn" id="studioHomeBtn">🏠 HOME</button>
+          <button class="topbar-home-btn" onclick="goToHome()">← HOME</button>
           <div class="brand">
-            <div class="brand-icon">▶</div>
-            <span>Animation Studio</span>
+            <div class="brand-icon">✨</div>
+            <span>Drawing Studio</span>
           </div>
         </div>
-        <div class="topbar-right">
-          <span class="status-dot"></span>
-          <span id="topbarStatus">Ready to animate</span>
-        </div>
-      </header>
+      </div>
 
       <div class="workspace">
-        <aside class="sidebar">
-          <h3 class="panel-title">Lessons</h3>
-
-          <div class="lesson-box">
-            <strong>Beginner</strong>
-            <button type="button" data-preset="bounce">Bounce</button>
-            <button type="button" data-preset="fade">Fade</button>
-            <button type="button" data-preset="orbit">Orbit</button>
-          </div>
-
-          <div class="section">
-            <label>Shape</label>
-            <select id="shapeType">
-              <option value="square">Square</option>
-              <option value="circle">Circle</option>
-              <option value="triangle">Triangle</option>
-            </select>
-          </div>
-
-          <div class="section">
-            <label>Color</label>
-            <input type="color" id="colorInput" value="#8b5cf6" />
-          </div>
-
-          <div class="section">
-            <label>Frame Count</label>
-            <input id="frameCountInput" type="number" min="12" max="240" step="1" value="60" />
-          </div>
-
-          <div class="section">
-            <label>Frame Speed (ms)</label>
-            <input id="speedInput" type="number" min="10" max="200" step="5" value="60" />
-          </div>
-
-          <button id="applyTimingBtn" type="button">Apply Timing</button>
-
-          <h3 class="panel-title" style="margin-top: 18px;">How to Animate</h3>
-          <div class="guide">
-            <div class="guide-title">Step by step:</div>
-            <div>1. Move frame slider<br />2. Adjust position/size<br />3. Click "Set Keyframe"<br />4. Move to next frame<br />5. Press PLAY</div>
-          </div>
-
-          <button class="secondary" id="clearAnimBtn" type="button">Clear All</button>
-        </aside>
-
-        <div class="canvas-area">
-          <div class="canvas-viewport">
-            <canvas id="canvas"></canvas>
-          </div>
-
-          <div class="timeline">
-            <div class="timeline-header">
-              <h3 class="panel-title">Timeline</h3>
-              <div class="timeline-controls">
-                <button class="play-btn" id="playBtn" type="button">▶</button>
-                <button class="play-btn" id="stopBtn" type="button">⏹</button>
-              </div>
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar">
+          <div class="sidebar-section">
+            <div class="sidebar-title">Drawing Tools</div>
+            <div class="shape-grid">
+              <button class="shape-btn active" data-tool="pen" onclick="selectTool('pen', this)">✏️ Pen</button>
+              <button class="shape-btn" data-tool="line" onclick="selectTool('line', this)">📏 Line</button>
+              <button class="shape-btn" data-tool="rect" onclick="selectTool('rect', this)">▭ Rectangle</button>
+              <button class="shape-btn" data-tool="circle" onclick="selectTool('circle', this)">● Circle</button>
+              <button class="shape-btn" data-tool="triangle" onclick="selectTool('triangle', this)">△ Triangle</button>
+              <button class="shape-btn" data-tool="arrow" onclick="selectTool('arrow', this)">→ Arrow</button>
             </div>
+          </div>
 
-            <div class="timeline-row">
-              <label class="timeline-label">Frame: <span id="frameDisplay">0</span> / <span id="totalFrameLabel">60</span></label>
-              <div class="timeline-bar" id="timelineBar">
-                <div class="timeline-progress" id="timelineProgress"></div>
-              </div>
+          <div class="sidebar-section">
+            <div class="sidebar-title">Colors</div>
+            <div class="color-picker">
+              <div class="color-option active" style="background: #ffffff;" onclick="selectColor('#ffffff', this)"></div>
+              <div class="color-option" style="background: #ef4444;" onclick="selectColor('#ef4444', this)"></div>
+              <div class="color-option" style="background: #22d3ee;" onclick="selectColor('#22d3ee', this)"></div>
+              <div class="color-option" style="background: #8b5cf6;" onclick="selectColor('#8b5cf6', this)"></div>
+              <div class="color-option" style="background: #34d399;" onclick="selectColor('#34d399', this)"></div>
             </div>
+          </div>
 
-            <div style="margin-top: 8px;">
-              <input type="range" id="frameSlider" min="0" max="60" value="0" />
+          <div class="sidebar-section">
+            <div class="sidebar-title">Stroke Size</div>
+            <div class="slider-group">
+              <input type="range" id="strokeSize" min="1" max="50" value="2" oninput="updateStrokeSize(this.value)">
+              <span class="slider-value" id="strokeValue">2px</span>
             </div>
-
-            <div class="keyframe-strip" id="keyframeStrip"></div>
           </div>
         </div>
 
-        <aside class="inspector">
-          <h3 class="panel-title">Properties</h3>
+        <!-- CANVAS AREA -->
+        <div class="canvas-area">
+          <canvas id="drawingCanvas"></canvas>
+        </div>
 
-          <div class="section">
-            <label>Position X</label>
-            <input type="range" id="posX" min="0" max="800" value="400" />
-            <div class="value-box"><strong id="posXValue">400</strong>px</div>
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+          <div class="control-group">
+            <div class="control-label">Canvas</div>
+            <button class="control-btn" onclick="undoDrawing()">↶ Undo</button>
+            <button class="control-btn danger" onclick="clearCanvas()">🗑️ Clear All</button>
           </div>
 
-          <div class="section">
-            <label>Position Y</label>
-            <input type="range" id="posY" min="0" max="400" value="200" />
-            <div class="value-box"><strong id="posYValue">200</strong>px</div>
+          <div class="control-group">
+            <div class="control-label">Export</div>
+            <button class="control-btn" onclick="downloadCanvas()">⬇️ Download</button>
+            <button class="control-btn" onclick="copyCanvas()">📋 Copy</button>
           </div>
 
-          <div class="section">
-            <label>Size</label>
-            <input type="range" id="size" min="10" max="200" value="60" />
-            <div class="value-box"><strong id="sizeValue">60</strong>px</div>
+          <div class="control-group">
+            <div class="control-label">Navigation</div>
+            <button class="back-btn-top" onclick="goToHome()">← Back to Home</button>
           </div>
-
-          <div class="section">
-            <label>Rotation</label>
-            <input type="range" id="rotation" min="0" max="360" value="0" />
-            <div class="value-box"><strong id="rotationValue">0</strong>°</div>
-          </div>
-
-          <div class="section">
-            <label>Opacity</label>
-            <input type="range" id="opacity" min="0" max="100" value="100" />
-            <div class="value-box"><strong id="opacityValue">100</strong>%</div>
-          </div>
-
-          <button class="secondary" id="setKeyframeBtn" type="button">📌 Set Keyframe</button>
-        </aside>
+        </div>
       </div>
     </div>
 
     <script>
-      const canvas = document.getElementById('canvas');
+      // Canvas Setup
+      const canvas = document.getElementById('drawingCanvas');
       const ctx = canvas.getContext('2d');
+      const homeMenu = document.getElementById('homeMenu');
+      const studioView = document.getElementById('studioView');
 
-      let currentFrame = 0;
-      let totalFrames = 60;
-      let animationSpeed = 60;
-      let animationTimer = null;
-      let isPlaying = false;
-      let gameLoop = null;
-      let currentGame = null;
+      let isDrawing = false;
+      let currentTool = 'pen';
+      let currentColor = '#ffffff';
+      let strokeSize = 2;
+      let startX, startY;
+      const history = [];
 
-      const presets = {
-        bounce: {
-          color: '#8b5cf6',
-          shapeType: 'circle',
-          keyframes: {
-            0: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 },
-            10: { x: 200, y: 120, size: 70, rotation: 0, opacity: 100 },
-            20: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 },
-            30: { x: 200, y: 90, size: 80, rotation: 0, opacity: 100 },
-            40: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 },
-            60: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 }
-          }
-        },
-        fade: {
-          color: '#22d3ee',
-          shapeType: 'square',
-          keyframes: {
-            0: { x: 400, y: 200, size: 80, rotation: 0, opacity: 0 },
-            20: { x: 400, y: 200, size: 80, rotation: 0, opacity: 50 },
-            40: { x: 400, y: 200, size: 90, rotation: 15, opacity: 100 },
-            60: { x: 400, y: 200, size: 80, rotation: 0, opacity: 100 }
-          }
-        },
-        orbit: {
-          color: '#34d399',
-          shapeType: 'triangle',
-          keyframes: {
-            0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 },
-            15: { x: 540, y: 150, size: 60, rotation: 45, opacity: 100 },
-            30: { x: 540, y: 260, size: 60, rotation: 90, opacity: 100 },
-            45: { x: 400, y: 300, size: 60, rotation: 180, opacity: 100 },
-            60: { x: 260, y: 260, size: 60, rotation: 270, opacity: 100 }
-          }
-        }
-      };
-
-      const games = [
-        { name: 'Snake', icon: '🐍', id: 'snake' },
-        { name: 'Memory Match', icon: '🧠', id: 'memory' },
-        { name: 'Flappy', icon: '🚀', id: 'flappy' }
-      ];
-
-      let object = {
-        shapeType: 'square',
-        color: '#8b5cf6',
-        keyframes: {
-          0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 },
-          30: { x: 220, y: 140, size: 100, rotation: 180, opacity: 100 },
-          60: { x: 400, y: 200, size: 60, rotation: 360, opacity: 100 }
-        }
-      };
-
-      let gameState = {
-        snake: { body: [[5, 5]], direction: [1, 0], food: [8, 8], score: 0 },
-        memory: { cards: [], selected: [], matched: [], checking: false },
-        flappy: { y: 150, vy: 0, score: 0, pipes: [] }
-      };
-
-      function showHomeMenu() {
-        document.getElementById('homeMenu').classList.add('active');
-        document.getElementById('studio').classList.remove('active');
-        document.getElementById('menuOverlay').classList.remove('active');
-        document.getElementById('gameContainer').classList.remove('active');
-        stopGameLoop();
-        stopAnimationLoop();
-      }
-
-      function showStudio() {
-        document.getElementById('homeMenu').classList.remove('active');
-        document.getElementById('studio').classList.add('active');
-        document.getElementById('menuOverlay').classList.remove('active');
-        document.getElementById('gameContainer').classList.remove('active');
-        stopGameLoop();
-        stopAnimationLoop();
-        resizeCanvas();
-      }
-
-      function showGamesMenu() {
-        document.getElementById('homeMenu').classList.remove('active');
-        document.getElementById('studio').classList.remove('active');
-        document.getElementById('menuOverlay').classList.add('active');
-        document.getElementById('gameContainer').classList.remove('active');
-        stopGameLoop();
-        stopAnimationLoop();
-      }
-
-      document.getElementById('toStudioBtn').addEventListener('click', showStudio);
-      document.getElementById('toGamesBtn').addEventListener('click', showGamesMenu);
-      document.getElementById('studioHomeBtn').addEventListener('click', showHomeMenu);
-      document.getElementById('menuBackBtn').addEventListener('click', () => {
-        document.getElementById('homeMenu').classList.add('active');
-        document.getElementById('menuOverlay').classList.remove('active');
-      });
-      document.getElementById('menuHomeBtn').addEventListener('click', showHomeMenu);
-      document.getElementById('gameBackBtn').addEventListener('click', showGamesMenu);
-      document.getElementById('gameHomeBtn').addEventListener('click', showHomeMenu);
-      document.getElementById('gameHomeBtn2').addEventListener('click', showHomeMenu);
-
-      function stopAnimationLoop() {
-        if (animationTimer) {
-          clearTimeout(animationTimer);
-          animationTimer = null;
-        }
-        isPlaying = false;
-      }
-
-      function stopGameLoop() {
-        if (gameLoop) {
-          clearInterval(gameLoop);
-          gameLoop = null;
-        }
-      }
-
+      // Canvas Resize & Setup
       function resizeCanvas() {
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = Math.max(300, rect.width);
-        canvas.height = Math.max(220, rect.height);
-        draw();
+        const canvasArea = canvas.parentElement;
+        canvas.width = canvasArea.clientWidth;
+        canvas.height = canvasArea.clientHeight;
+        ctx.fillStyle = 'rgba(10, 14, 26, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
-
-      function clampFrameCount(value) {
-        const frameValue = Number(value);
-        if (!Number.isFinite(frameValue)) return 60;
-        return Math.min(240, Math.max(12, Math.round(frameValue)));
-      }
-
-      function clampSpeed(value) {
-        const speedValue = Number(value);
-        if (!Number.isFinite(speedValue)) return 60;
-        return Math.min(200, Math.max(10, Math.round(speedValue)));
-      }
-
-      function syncTimingInputs() {
-        document.getElementById('frameCountInput').value = totalFrames;
-        document.getElementById('speedInput').value = animationSpeed;
-        document.getElementById('frameSlider').max = totalFrames;
-        document.getElementById('totalFrameLabel').textContent = totalFrames;
-      }
-
-      function applyTiming() {
-        totalFrames = clampFrameCount(document.getElementById('frameCountInput').value);
-        animationSpeed = clampSpeed(document.getElementById('speedInput').value);
-        currentFrame = Math.min(currentFrame, totalFrames);
-        syncTimingInputs();
-        updateDisplay();
-        renderKeyframes();
-        draw();
-      }
-
-      function lerp(a, b, t) {
-        return a + (b - a) * t;
-      }
-
-      function getState(frame) {
-        const frames = Object.keys(object.keyframes).map(Number).sort((a, b) => a - b);
-        let before = frames[0];
-        let after = frames[frames.length - 1];
-
-        for (let i = 0; i < frames.length - 1; i++) {
-          if (frame >= frames[i] && frame <= frames[i + 1]) {
-            before = frames[i];
-            after = frames[i + 1];
-            break;
-          }
-        }
-
-        if (before === after) {
-          return object.keyframes[before] || { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 };
-        }
-
-        const t = (frame - before) / (after - before);
-        const k1 = object.keyframes[before];
-        const k2 = object.keyframes[after];
-
-        return {
-          x: lerp(k1.x, k2.x, t),
-          y: lerp(k1.y, k2.y, t),
-          size: lerp(k1.size, k2.size, t),
-          rotation: lerp(k1.rotation, k2.rotation, t),
-          opacity: lerp(k1.opacity, k2.opacity, t)
-        };
-      }
-
-      function drawShape(x, y, size, rotation, opacity, type, color) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate((rotation * Math.PI) / 180);
-        ctx.globalAlpha = opacity / 100;
-        ctx.fillStyle = color;
-
-        if (type === 'square') {
-          ctx.fillRect(-size / 2, -size / 2, size, size);
-        } else if (type === 'circle') {
-          ctx.beginPath();
-          ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (type === 'triangle') {
-          ctx.beginPath();
-          ctx.moveTo(0, -size / 2);
-          ctx.lineTo(size / 2, size / 2);
-          ctx.lineTo(-size / 2, size / 2);
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        ctx.restore();
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const state = getState(currentFrame);
-        drawShape(state.x, state.y, state.size, state.rotation, state.opacity, object.shapeType, object.color);
-      }
-
-      function updateDisplay() {
-        document.getElementById('frameDisplay').textContent = currentFrame;
-        document.getElementById('frameSlider').value = currentFrame;
-        document.getElementById('timelineProgress').style.width = (currentFrame / totalFrames) * 100 + '%';
-
-        const state = getState(currentFrame);
-        document.getElementById('posXValue').textContent = Math.round(state.x);
-        document.getElementById('posYValue').textContent = Math.round(state.y);
-        document.getElementById('sizeValue').textContent = Math.round(state.size);
-        document.getElementById('rotationValue').textContent = Math.round(state.rotation);
-        document.getElementById('opacityValue').textContent = Math.round(state.opacity);
-
-        document.getElementById('posX').value = Math.round(state.x);
-        document.getElementById('posY').value = Math.round(state.y);
-        document.getElementById('size').value = Math.round(state.size);
-        document.getElementById('rotation').value = Math.round(state.rotation);
-        document.getElementById('opacity').value = Math.round(state.opacity);
-      }
-
-      function renderKeyframes() {
-        const strip = document.getElementById('keyframeStrip');
-        strip.innerHTML = '';
-
-        for (let i = 0; i <= totalFrames; i += 5) {
-          const btn = document.createElement('button');
-          btn.className = 'keyframe' + (object.keyframes[i] ? ' active' : '');
-          btn.textContent = i;
-          btn.type = 'button';
-          btn.onclick = () => {
-            currentFrame = i;
-            updateDisplay();
-            draw();
-          };
-          strip.appendChild(btn);
-        }
-      }
-
-      function animationLoop() {
-        if (!isPlaying) return;
-        draw();
-        currentFrame += 1;
-        if (currentFrame > totalFrames) currentFrame = 0;
-        updateDisplay();
-        animationTimer = setTimeout(animationLoop, animationSpeed);
-      }
-
-      function applyPreset(name) {
-        const preset = presets[name];
-        if (!preset) return;
-
-        object = {
-          ...object,
-          color: preset.color,
-          shapeType: preset.shapeType,
-          keyframes: JSON.parse(JSON.stringify(preset.keyframes))
-        };
-
-        document.getElementById('shapeType').value = preset.shapeType;
-        document.getElementById('colorInput').value = preset.color;
-        currentFrame = 0;
-        stopAnimationLoop();
-        updateDisplay();
-        renderKeyframes();
-        draw();
-      }
-
-      function renderSnake() {
-        const gameArea = document.getElementById('gameArea');
-        gameArea.innerHTML = '';
-        const grid = document.createElement('div');
-        grid.className = 'snake-grid';
-
-        for (let y = 0; y < 10; y++) {
-          for (let x = 0; x < 10; x++) {
-            const cell = document.createElement('div');
-            cell.className = 'snake-cell';
-            if (gameState.snake.body.some(segment => segment[0] === x && segment[1] === y)) cell.classList.add('snake');
-            if (gameState.snake.food[0] === x && gameState.snake.food[1] === y) cell.classList.add('food');
-            grid.appendChild(cell);
-          }
-        }
-
-        gameArea.appendChild(grid);
-        document.getElementById('gameScore').textContent = `Score: ${gameState.snake.score}`;
-      }
-
-      function updateSnake() {
-        const head = [...gameState.snake.body[0]];
-        head[0] += gameState.snake.direction[0];
-        head[1] += gameState.snake.direction[1];
-
-        if (
-          head[0] < 0 || head[0] >= 10 || head[1] < 0 || head[1] >= 10 ||
-          gameState.snake.body.some(segment => segment[0] === head[0] && segment[1] === head[1])
-        ) {
-          document.getElementById('gameScore').textContent = `Game Over! Final Score: ${gameState.snake.score}`;
-          stopGameLoop();
-          return;
-        }
-
-        gameState.snake.body.unshift(head);
-
-        if (head[0] === gameState.snake.food[0] && head[1] === gameState.snake.food[1]) {
-          gameState.snake.score += 10;
-          do {
-            gameState.snake.food = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
-          } while (gameState.snake.body.some(segment => segment[0] === gameState.snake.food[0] && segment[1] === gameState.snake.food[1]));
-        } else {
-          gameState.snake.body.pop();
-        }
-
-        renderSnake();
-      }
-
-      function renderMemory() {
-        const gameArea = document.getElementById('gameArea');
-        gameArea.innerHTML = '';
-        const grid = document.createElement('div');
-        grid.className = 'memory-grid';
-
-        const selected = new Set(gameState.memory.selected);
-        const matched = new Set(gameState.memory.matched);
-
-        gameState.memory.cards.forEach((card, i) => {
-          const btn = document.createElement('button');
-          btn.className = 'memory-card';
-          const visible = selected.has(i) || matched.has(i);
-
-          if (matched.has(i)) {
-            btn.classList.add('flipped');
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
-          } else if (selected.has(i)) {
-            btn.classList.add('flipped');
-          }
-
-          btn.textContent = visible ? card : '?';
-          btn.onclick = () => flipMemoryCard(i);
-          grid.appendChild(btn);
-        });
-
-        gameArea.appendChild(grid);
-        document.getElementById('gameScore').textContent = `Matched: ${gameState.memory.matched.length / 2}/8`;
-      }
-
-      function flipMemoryCard(index) {
-        if (gameState.memory.checking) return;
-        if (gameState.memory.matched.includes(index) || gameState.memory.selected.includes(index)) return;
-
-        gameState.memory.selected.push(index);
-        renderMemory();
-
-        if (gameState.memory.selected.length === 2) {
-          gameState.memory.checking = true;
-          const [a, b] = gameState.memory.selected;
-
-          setTimeout(() => {
-            if (gameState.memory.cards[a] === gameState.memory.cards[b]) {
-              gameState.memory.matched.push(a, b);
-              if (gameState.memory.matched.length === gameState.memory.cards.length) {
-                document.getElementById('gameScore').textContent = 'You Won! 🎉';
-                gameState.memory.checking = false;
-                stopGameLoop();
-                return;
-              }
-            }
-
-            gameState.memory.selected = [];
-            gameState.memory.checking = false;
-            renderMemory();
-          }, 500);
-        }
-      }
-
-      function renderFlappy() {
-        const gameArea = document.getElementById('gameArea');
-        gameArea.innerHTML = '';
-        gameArea.style.position = 'relative';
-
-        const bird = document.createElement('div');
-        bird.className = 'flappy-bird';
-        bird.style.top = `${gameState.flappy.y}px`;
-        bird.style.left = '20px';
-        gameArea.appendChild(bird);
-
-        gameState.flappy.pipes.forEach(pipe => {
-          const topPipe = document.createElement('div');
-          topPipe.className = 'pipe';
-          topPipe.style.left = `${pipe.x}px`;
-          topPipe.style.top = '0';
-          topPipe.style.height = `${pipe.gap}px`;
-          gameArea.appendChild(topPipe);
-
-          const bottomPipe = document.createElement('div');
-          bottomPipe.className = 'pipe';
-          bottomPipe.style.left = `${pipe.x}px`;
-          bottomPipe.style.bottom = '0';
-          bottomPipe.style.height = `${300 - pipe.gap - 90}px`;
-          gameArea.appendChild(bottomPipe);
-        });
-      }
-
-      function updateFlappy() {
-        gameState.flappy.vy += 0.5;
-        gameState.flappy.y += gameState.flappy.vy;
-
-        if (gameState.flappy.y > 280 || gameState.flappy.y < 0) {
-          document.getElementById('gameScore').textContent = `Game Over! Score: ${gameState.flappy.score}`;
-          stopGameLoop();
-          return;
-        }
-
-        if (gameState.flappy.pipes.length === 0 || gameState.flappy.pipes[gameState.flappy.pipes.length - 1].x < 220) {
-          gameState.flappy.pipes.push({ x: 500, gap: Math.random() * 100 + 80, scored: false });
-        }
-
-        gameState.flappy.pipes = gameState.flappy.pipes.filter(pipe => pipe.x > -60);
-
-        const birdX = 20;
-        const birdY = gameState.flappy.y;
-        const birdW = 24;
-        const birdH = 24;
-
-        gameState.flappy.pipes.forEach(pipe => {
-          pipe.x -= 4;
-
-          if (!pipe.scored && pipe.x + 60 < birdX) {
-            pipe.scored = true;
-            gameState.flappy.score += 1;
-          }
-
-          if (
-            pipe.x < birdX + birdW && pipe.x + 60 > birdX &&
-            (birdY < pipe.gap || birdY + birdH > pipe.gap + 90)
-          ) {
-            document.getElementById('gameScore').textContent = `Game Over! Score: ${gameState.flappy.score}`;
-            stopGameLoop();
-          }
-        });
-
-        document.getElementById('gameScore').textContent = `Score: ${gameState.flappy.score}`;
-        renderFlappy();
-      }
-
-      function resetGame(gameId) {
-        const gameArea = document.getElementById('gameArea');
-        gameArea.innerHTML = '';
-        document.getElementById('gameTitle').textContent = games.find(game => game.id === gameId).name;
-        document.getElementById('gameScore').textContent = 'Score: 0';
-
-        if (gameId === 'snake') {
-          gameState.snake = { body: [[5, 5]], direction: [1, 0], food: [8, 8], score: 0 };
-          renderSnake();
-        } else if (gameId === 'memory') {
-          const symbols = ['🎵', '🎵', '🎮', '🎮', '🎨', '🎨', '🎯', '🎯', '🎪', '🎪', '🎭', '🎭', '🎬', '🎬', '🎤', '🎤'];
-          gameState.memory = {
-            cards: symbols.sort(() => Math.random() - 0.5),
-            selected: [],
-            matched: [],
-            checking: false
-          };
-          renderMemory();
-        } else if (gameId === 'flappy') {
-          gameState.flappy = { y: 150, vy: 0, score: 0, pipes: [] };
-          renderFlappy();
-        }
-      }
-
-      function startGame(gameId) {
-        stopGameLoop();
-        currentGame = gameId;
-        document.getElementById('menuOverlay').classList.remove('active');
-        document.getElementById('gameContainer').classList.add('active');
-        resetGame(gameId);
-
-        if (gameId === 'snake') {
-          gameLoop = setInterval(updateSnake, 200);
-        } else if (gameId === 'flappy') {
-          gameLoop = setInterval(updateFlappy, 50);
-        }
-      }
-
-      const menuGrid = document.getElementById('menuGrid');
-      games.forEach(game => {
-        const btn = document.createElement('button');
-        btn.className = 'menu-btn';
-        btn.innerHTML = `<div class="menu-icon">${game.icon}</div><div>${game.name}</div>`;
-        btn.onclick = () => startGame(game.id);
-        menuGrid.appendChild(btn);
-      });
-
-      document.getElementById('playBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        stopAnimationLoop();
-        isPlaying = true;
-        animationLoop();
-      });
-
-      document.getElementById('stopBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        stopAnimationLoop();
-        currentFrame = 0;
-        updateDisplay();
-        draw();
-      });
-
-      document.getElementById('frameSlider').addEventListener('input', (e) => {
-        currentFrame = Number(e.target.value);
-        updateDisplay();
-        draw();
-      });
-
-      document.getElementById('timelineBar').addEventListener('click', (e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        currentFrame = Math.round(percent * totalFrames);
-        updateDisplay();
-        draw();
-      });
-
-      document.getElementById('setKeyframeBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        object.keyframes[currentFrame] = {
-          x: Number(document.getElementById('posX').value),
-          y: Number(document.getElementById('posY').value),
-          size: Number(document.getElementById('size').value),
-          rotation: Number(document.getElementById('rotation').value),
-          opacity: Number(document.getElementById('opacity').value)
-        };
-        renderKeyframes();
-        draw();
-      });
-
-      document.getElementById('clearAnimBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        object.keyframes = { 0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 } };
-        currentFrame = 0;
-        stopAnimationLoop();
-        renderKeyframes();
-        updateDisplay();
-        draw();
-      });
-
-      document.getElementById('shapeType').addEventListener('change', (e) => {
-        object.shapeType = e.target.value;
-        draw();
-      });
-
-      document.getElementById('colorInput').addEventListener('input', (e) => {
-        object.color = e.target.value;
-        draw();
-      });
-
-      document.getElementById('posX').addEventListener('input', (e) => {
-        document.getElementById('posXValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('posY').addEventListener('input', (e) => {
-        document.getElementById('posYValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('size').addEventListener('input', (e) => {
-        document.getElementById('sizeValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('rotation').addEventListener('input', (e) => {
-        document.getElementById('rotationValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('opacity').addEventListener('input', (e) => {
-        document.getElementById('opacityValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.querySelectorAll('[data-preset]').forEach((button) => {
-        button.addEventListener('click', () => applyPreset(button.dataset.preset));
-      });
-
-      document.getElementById('applyTimingBtn').addEventListener('click', applyTiming);
-
-      // Game controls: WASD for snake, click for flappy
-      document.addEventListener('keydown', (e) => {
-        if (currentGame === 'snake') {
-          if (e.key.toLowerCase() === 'w' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, -1];
-          if (e.key.toLowerCase() === 's' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, 1];
-          if (e.key.toLowerCase() === 'a' && gameState.snake.direction[0] === 0) gameState.snake.direction = [-1, 0];
-          if (e.key.toLowerCase() === 'd' && gameState.snake.direction[0] === 0) gameState.snake.direction = [1, 0];
-        }
-      });
-
-      // Click to fly for Flappy
-      document.getElementById('gameArea').addEventListener('click', () => {
-        if (currentGame === 'flappy') {
-          gameState.flappy.vy = -10;
-        }
-      });
 
       window.addEventListener('resize', resizeCanvas);
-      syncTimingInputs();
-      renderKeyframes();
-      updateDisplay();
       resizeCanvas();
+
+      // Save state for undo
+      function saveState() {
+        history.push(canvas.toDataURL());
+        if (history.length > 20) history.shift();
+      }
+
+      // Drawing Functions
+      function drawLine(fromX, fromY, toX, toY) {
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = strokeSize;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+      }
+
+      function drawRect(fromX, fromY, toX, toY) {
+        const width = toX - fromX;
+        const height = toY - fromY;
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = strokeSize;
+        ctx.strokeRect(fromX, fromY, width, height);
+      }
+
+      function drawCircle(fromX, fromY, toX, toY) {
+        const radius = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = strokeSize;
+        ctx.beginPath();
+        ctx.arc(fromX, fromY, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+      }
+
+      function drawTriangle(fromX, fromY, toX, toY) {
+        const midX = (fromX + toX) / 2;
+        const midY = fromY;
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = strokeSize;
+        ctx.beginPath();
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(fromX, toY);
+        ctx.lineTo(toX, toY);
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      function drawArrow(fromX, fromY, toX, toY) {
+        const headlen = 15;
+        const angle = Math.atan2(toY - fromY, toX - fromX);
+        
+        ctx.strokeStyle = currentColor;
+        ctx.fillStyle = currentColor;
+        ctx.lineWidth = strokeSize;
+        
+        // Draw line
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+        
+        // Draw arrowhead
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Mouse Events
+      canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        const rect = canvas.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        saveState();
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        if (!isDrawing) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const currentX = e.clientX - rect.left;
+        const currentY = e.clientY - rect.top;
+        
+        // Restore last state for preview
+        if (history.length > 0) {
+          const img = new Image();
+          img.src = history[history.length - 1];
+          img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            drawCurrentShape(startX, startY, currentX, currentY);
+          };
+        }
+      });
+
+      canvas.addEventListener('mouseup', () => {
+        isDrawing = false;
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        isDrawing = false;
+      });
+
+      function drawCurrentShape(fromX, fromY, toX, toY) {
+        switch (currentTool) {
+          case 'pen':
+            drawLine(fromX, fromY, toX, toY);
+            break;
+          case 'line':
+            drawLine(fromX, fromY, toX, toY);
+            break;
+          case 'rect':
+            drawRect(fromX, fromY, toX, toY);
+            break;
+          case 'circle':
+            drawCircle(fromX, fromY, toX, toY);
+            break;
+          case 'triangle':
+            drawTriangle(fromX, fromY, toX, toY);
+            break;
+          case 'arrow':
+            drawArrow(fromX, fromY, toX, toY);
+            break;
+        }
+      }
+
+      // UI Functions
+      function selectTool(tool, element) {
+        currentTool = tool;
+        document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+      }
+
+      function selectColor(color, element) {
+        currentColor = color;
+        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+      }
+
+      function updateStrokeSize(value) {
+        strokeSize = value;
+        document.getElementById('strokeValue').textContent = value + 'px';
+      }
+
+      function undoDrawing() {
+        if (history.length > 1) {
+          history.pop();
+          const img = new Image();
+          img.src = history[history.length - 1];
+          img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+          };
+        }
+      }
+
+      function clearCanvas() {
+        if (confirm('Clear all drawings?')) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          history.length = 0;
+          saveState();
+        }
+      }
+
+      function downloadCanvas() {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL();
+        link.download = 'drawing.png';
+        link.click();
+      }
+
+      function copyCanvas() {
+        canvas.toBlob(blob => {
+          navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          alert('Drawing copied to clipboard!');
+        });
+      }
+
+      // Navigation
+      function goToHome() {
+        homeMenu.classList.add('active');
+        studioView.classList.remove('active');
+      }
+
+      function goToStudio() {
+        homeMenu.classList.remove('active');
+        studioView.classList.add('active');
+        setTimeout(resizeCanvas, 100);
+      }
+
+      function goToFlappyBird() {
+        alert('🐦 Flappy Bird coming soon!');
+      }
+
+      function goToSnake() {
+        alert('🐍 Snake Game coming soon!');
+      }
     </script>
   </body>
 </html>
