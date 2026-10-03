@@ -34,8 +34,6 @@
 
       body {
         display: flex;
-        align-items: stretch;
-        justify-content: stretch;
       }
 
       .studio {
@@ -125,7 +123,11 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(20, 28, 44, 0.8));
+        background:
+          linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(20, 28, 44, 0.8));
+        background-size: 24px 24px, 24px 24px, 100% 100%;
       }
 
       canvas {
@@ -226,6 +228,23 @@
       .guide-title {
         font-weight: 700;
         color: var(--cyan);
+        margin-bottom: 6px;
+      }
+
+      .lesson-box {
+        background: rgba(139, 92, 246, 0.08);
+        border: 1px solid rgba(139, 92, 246, 0.18);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 12px;
+      }
+
+      .lesson-box strong {
+        display: block;
+        font-size: 0.75rem;
+        color: #ddd6fe;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
         margin-bottom: 6px;
       }
 
@@ -391,10 +410,17 @@
 
       <div class="workspace">
         <aside class="sidebar">
-          <h3 class="panel-title">Shape</h3>
+          <h3 class="panel-title">Lessons</h3>
+
+          <div class="lesson-box">
+            <strong>Beginner</strong>
+            <button type="button" data-preset="bounce">Bounce</button>
+            <button type="button" data-preset="fade">Fade</button>
+            <button type="button" data-preset="orbit">Orbit</button>
+          </div>
 
           <div class="section">
-            <label>Type</label>
+            <label>Shape</label>
             <select id="shapeType">
               <option value="square">Square</option>
               <option value="circle">Circle</option>
@@ -419,7 +445,7 @@
             </div>
           </div>
 
-          <button class="secondary" id="clearAnimBtn">Clear All</button>
+          <button class="secondary" id="clearAnimBtn" type="button">Clear All</button>
         </aside>
 
         <div class="canvas-area">
@@ -431,8 +457,8 @@
             <div class="timeline-header">
               <h3 class="panel-title">Timeline</h3>
               <div class="timeline-controls">
-                <button class="play-btn" id="playBtn">▶</button>
-                <button class="play-btn" id="stopBtn">⏹</button>
+                <button class="play-btn" id="playBtn" type="button">▶</button>
+                <button class="play-btn" id="stopBtn" type="button">⏹</button>
               </div>
             </div>
 
@@ -484,7 +510,7 @@
             <div class="value-box"><strong id="opacityValue">100</strong>%</div>
           </div>
 
-          <button class="secondary" id="setKeyframeBtn">📌 Set Keyframe</button>
+          <button class="secondary" id="setKeyframeBtn" type="button">📌 Set Keyframe</button>
         </aside>
       </div>
     </div>
@@ -492,6 +518,42 @@
     <script>
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
+
+      const presets = {
+        bounce: {
+          color: '#8b5cf6',
+          shapeType: 'circle',
+          keyframes: {
+            0: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 },
+            10: { x: 200, y: 120, size: 70, rotation: 0, opacity: 100 },
+            20: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 },
+            30: { x: 200, y: 90, size: 80, rotation: 0, opacity: 100 },
+            40: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 },
+            60: { x: 200, y: 200, size: 60, rotation: 0, opacity: 100 }
+          }
+        },
+        fade: {
+          color: '#22d3ee',
+          shapeType: 'square',
+          keyframes: {
+            0: { x: 400, y: 200, size: 80, rotation: 0, opacity: 0 },
+            20: { x: 400, y: 200, size: 80, rotation: 0, opacity: 50 },
+            40: { x: 400, y: 200, size: 90, rotation: 15, opacity: 100 },
+            60: { x: 400, y: 200, size: 80, rotation: 0, opacity: 100 }
+          }
+        },
+        orbit: {
+          color: '#34d399',
+          shapeType: 'triangle',
+          keyframes: {
+            0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 },
+            15: { x: 540, y: 150, size: 60, rotation: 45, opacity: 100 },
+            30: { x: 540, y: 260, size: 60, rotation: 90, opacity: 100 },
+            45: { x: 400, y: 300, size: 60, rotation: 180, opacity: 100 },
+            60: { x: 260, y: 260, size: 60, rotation: 270, opacity: 100 }
+          }
+        }
+      };
 
       function resizeCanvas() {
         const rect = canvas.parentElement.getBoundingClientRect();
@@ -505,7 +567,7 @@
       let isPlaying = false;
       let currentFrame = 0;
       let totalFrames = 60;
-      let animationSpeed = 50;
+      let animationSpeed = 60;
 
       let object = {
         shapeType: 'square',
@@ -635,6 +697,26 @@
         }
       }
 
+      function applyPreset(name) {
+        const preset = presets[name];
+        if (!preset) return;
+
+        object = {
+          ...object,
+          color: preset.color,
+          shapeType: preset.shapeType,
+          keyframes: JSON.parse(JSON.stringify(preset.keyframes))
+        };
+
+        document.getElementById('shapeType').value = preset.shapeType;
+        document.getElementById('colorInput').value = preset.color;
+        currentFrame = 0;
+        isPlaying = false;
+        updateDisplay();
+        renderKeyframes();
+        draw();
+      }
+
       document.getElementById('playBtn').addEventListener('click', (e) => {
         e.preventDefault();
         isPlaying = true;
@@ -721,6 +803,10 @@
       document.getElementById('opacity').addEventListener('input', (e) => {
         document.getElementById('opacityValue').textContent = e.target.value;
         draw();
+      });
+
+      document.querySelectorAll('[data-preset]').forEach((button) => {
+        button.addEventListener('click', () => applyPreset(button.dataset.preset));
       });
 
       renderKeyframes();
