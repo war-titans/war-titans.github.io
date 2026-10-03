@@ -1,39 +1,19 @@
-      function flipMemoryCard(i) {
-        // Prevent clicking if game is paused or card is already flipped
-        if (gameState.memory.flipped[i] || gameState.memory.checking) return;
-        
-        gameState.memory.flipped[i] = true;
-        renderMemory();
+      function resetGame(gameId) {
+        const gameArea = document.getElementById('gameArea');
+        gameArea.innerHTML = '';
+        document.getElementById('gameTitle').textContent = games.find(g => g.id === gameId).name;
+        document.getElementById('gameScore').textContent = 'Score: 0';
 
-        const flippedIndexes = gameState.memory.flipped.map((item, index) => (item ? index : -1)).filter(index => index >= 0);
-
-        if (flippedIndexes.length === 2) {
-          gameState.memory.checking = true;
-          
-          setTimeout(() => {
-            const [a, b] = flippedIndexes;
-            
-            if (gameState.memory.cards[a] === gameState.memory.cards[b]) {
-              // Matched! Keep them flipped
-              gameState.memory.matched += 1;
-              gameState.memory.flipped[a] = 'matched';
-              gameState.memory.flipped[b] = 'matched';
-              
-              if (gameState.memory.matched === 8) {
-                document.getElementById('gameScore').textContent = 'You Won! 🎉';
-                gameState.memory.checking = false;
-                stopGameLoop();
-                return;
-              }
-            } else {
-              // No match, flip them back
-              gameState.memory.flipped[a] = false;
-              gameState.memory.flipped[b] = false;
-            }
-            
-            gameState.memory.checking = false;
-            renderMemory();
-          }, 600);
+        if (gameId === 'snake') {
+          gameState.snake = { body: [[5, 5]], direction: [1, 0], food: [8, 8], score: 0 };
+          renderSnake();
+        } else if (gameId === 'memory') {
+          const symbols = ['🎵', '🎵', '🎮', '🎮', '🎨', '🎨', '🎯', '🎯', '🎪', '🎪', '🎭', '🎭', '🎬', '🎬', '🎤', '🎤'];
+          gameState.memory = { cards: symbols.sort(() => Math.random() - 0.5), selected: [], matched: [], checking: false };
+          renderMemory();
+        } else if (gameId === 'flappy') {
+          gameState.flappy = { y: 150, vy: 0, score: 0, pipes: [] };
+          renderFlappy();
         }
       }
 
@@ -42,24 +22,57 @@
         gameArea.innerHTML = '';
         const grid = document.createElement('div');
         grid.className = 'memory-grid';
-        
+
+        const selected = new Set(gameState.memory.selected);
+        const matched = new Set(gameState.memory.matched);
+
         gameState.memory.cards.forEach((card, i) => {
           const btn = document.createElement('button');
           btn.className = 'memory-card';
-          
-          if (gameState.memory.flipped[i] === 'matched') {
+          const isVisible = selected.has(i) || matched.has(i);
+
+          if (matched.has(i)) {
             btn.classList.add('flipped');
-            btn.style.opacity = '0.5';
             btn.disabled = true;
-          } else if (gameState.memory.flipped[i]) {
+            btn.style.opacity = '0.5';
+          } else if (selected.has(i)) {
             btn.classList.add('flipped');
           }
-          
-          btn.textContent = gameState.memory.flipped[i] ? card : '?';
+
+          btn.textContent = isVisible ? card : '?';
           btn.onclick = () => flipMemoryCard(i);
           grid.appendChild(btn);
         });
-        
+
         gameArea.appendChild(grid);
-        document.getElementById('gameScore').textContent = `Matched: ${gameState.memory.matched}/8`;
+        document.getElementById('gameScore').textContent = `Matched: ${gameState.memory.matched.length / 2}/8`;
+      }
+
+      function flipMemoryCard(i) {
+        if (gameState.memory.checking) return;
+        if (gameState.memory.matched.includes(i) || gameState.memory.selected.includes(i)) return;
+
+        gameState.memory.selected.push(i);
+        renderMemory();
+
+        if (gameState.memory.selected.length === 2) {
+          gameState.memory.checking = true;
+          const [a, b] = gameState.memory.selected;
+
+          setTimeout(() => {
+            if (gameState.memory.cards[a] === gameState.memory.cards[b]) {
+              gameState.memory.matched.push(a, b);
+              if (gameState.memory.matched.length === gameState.memory.cards.length) {
+                document.getElementById('gameScore').textContent = 'You Won! 🎉';
+                gameState.memory.checking = false;
+                stopGameLoop();
+                return;
+              }
+            }
+
+            gameState.memory.selected = [];
+            gameState.memory.checking = false;
+            renderMemory();
+          }, 500);
+        }
       }
