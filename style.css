@@ -2,3 +2,34 @@
  body {
   background-color: rgb(44, 45, 45);
   font-family: 'Courier New', Courier, monospace;
+}
+p {
+  color: blue;
+}
+h1 {
+  color: blue;
+}
+h2 {
+  color: blue;
+}
+h3 {
+  color: blue;
+}
+h4 {
+  color: blue;
+}
+h5 {
+  color: blue;
+}
+h6 {
+  color: blue;
+}
+ul {
+  color: blue;
+}
+li {
+  color: blue;
+}
+ol {
+  color: blue;
+}  
