@@ -1,35 +1,35 @@
 /*Body is the background.*/
  body {
-  background-color: rgb(44, 45, 45);
+  background-color: black;
   font-family: 'Courier New', Courier, monospace;
 }
 p {
   color: teal;
 }
 h1 {
-  color: blue;
+  color: teal;
 }
 h2 {
-  color: blue;
+  color: teal;
 }
 h3 {
-  color: blue;
+  color: teal;
 }
 h4 {
-  color: blue;
+  color: teal;
 }
 h5 {
-  color: blue;
+  color: teal;
 }
 h6 {
-  color: blue;
+  color: teal;
 }
 ul {
-  color: blue;
+  color: teal;
 }
 li {
-  color: blue;
+  color: teal;
 }
 ol {
-  color: blue;
+  color: teal;
 }  
