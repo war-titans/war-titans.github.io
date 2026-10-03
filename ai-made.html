@@ -138,6 +138,69 @@
         outline: none;
       }
 
+      .mini-game-panel {
+        background: rgba(15, 23, 42, 0.95);
+        border-top: 1px solid var(--line);
+        padding: 12px 16px 16px;
+        display: none;
+      }
+
+      .mini-game-panel.visible {
+        display: block;
+      }
+
+      .mini-game-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .mini-game-title {
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .mini-game-score {
+        font-size: 0.8rem;
+        color: var(--cyan);
+        font-weight: 700;
+      }
+
+      .mini-game-box {
+        position: relative;
+        height: 120px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(148, 163, 184, 0.04);
+        overflow: hidden;
+      }
+
+      .mini-game-target {
+        position: absolute;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--purple), var(--cyan));
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        cursor: pointer;
+        user-select: none;
+        font-size: 1.1rem;
+        transform: translate(-50%, -50%);
+      }
+
+      .mini-game-status {
+        margin-top: 8px;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
       .panel-title {
         font-size: 0.72rem;
         letter-spacing: 0.12em;
@@ -594,6 +657,17 @@
             <canvas id="canvas"></canvas>
           </div>
 
+          <div class="mini-game-panel" id="miniGamePanel">
+            <div class="mini-game-header">
+              <div class="mini-game-title" id="miniGameTitle">No game active</div>
+              <div class="mini-game-score" id="miniGameScore">0 pts</div>
+            </div>
+            <div class="mini-game-box" id="miniGameBox">
+              <div class="mini-game-target" id="miniGameTarget">●</div>
+            </div>
+            <div class="mini-game-status" id="miniGameStatus">Choose a mini-game from the menu.</div>
+          </div>
+
           <div class="timeline">
             <div class="timeline-header">
               <h3 class="panel-title">Timeline</h3>
@@ -714,42 +788,37 @@
         clicker: {
           name: 'Click Master',
           icon: '🖱️',
-          description: 'Click the shapes as fast as you can',
-          code: 'clickerGame'
+          description: 'Tap the moving orb before time runs out',
+          target: 10,
+          timeLimit: 15
         },
         memory: {
           name: 'Memory Match',
           icon: '🧠',
-          description: 'Match pairs of shapes to win',
-          code: 'memoryGame'
+          description: 'Match shapes and score quick streaks',
+          target: 8,
+          timeLimit: 20
         },
         snake: {
           name: 'Snake',
           icon: '🐍',
-          description: 'Classic snake game with animated graphics',
-          code: 'snakeGame'
+          description: 'Classic arcade move-and-grow challenge',
+          target: 12,
+          timeLimit: 20
         },
         catch: {
           name: 'Catch Shapes',
           icon: '🎯',
-          description: 'Catch falling animated shapes',
-          code: 'catchGame'
-        },
-        race: {
-          name: 'Race Track',
-          icon: '🏎️',
-          description: 'Race animated shapes around a track',
-          code: 'raceGame'
-        },
-        puzzle: {
-          name: 'Shape Puzzle',
-          icon: '🧩',
-          description: 'Arrange shapes to complete puzzles',
-          code: 'puzzleGame'
+          description: 'Catch falling targets to build points',
+          target: 9,
+          timeLimit: 18
         }
       };
 
       let selectedGame = null;
+      let activeMiniGame = null;
+      let activeGameTimer = null;
+      let activeGameScore = 0;
 
       function resizeCanvas() {
         const rect = canvas.parentElement.getBoundingClientRect();
@@ -973,15 +1042,100 @@
         selectedGame = null;
       }
 
+      function resetMiniGame() {
+        const gamePanel = document.getElementById('miniGamePanel');
+        const target = document.getElementById('miniGameTarget');
+        const scoreLabel = document.getElementById('miniGameScore');
+        const statusLabel = document.getElementById('miniGameStatus');
+
+        gamePanel.classList.add('visible');
+        target.style.left = '50%';
+        target.style.top = '50%';
+        target.textContent = '●';
+        scoreLabel.textContent = '0 pts';
+        statusLabel.textContent = 'Target ready — click the orb.';
+      }
+
+      function moveTarget() {
+        const box = document.getElementById('miniGameBox');
+        const target = document.getElementById('miniGameTarget');
+        if (!box || !target || !activeMiniGame) return;
+
+        const maxX = box.clientWidth - 42;
+        const maxY = box.clientHeight - 42;
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        target.style.left = `${x}px`;
+        target.style.top = `${y}px`;
+      }
+
+      function finishMiniGame() {
+        clearInterval(activeGameTimer);
+        activeGameTimer = null;
+
+        const statusLabel = document.getElementById('miniGameStatus');
+        const titleLabel = document.getElementById('miniGameTitle');
+        const target = document.getElementById('miniGameTarget');
+
+        statusLabel.textContent = `Game over! You scored ${activeGameScore} points in ${miniGames[activeMiniGame].name}.`;
+        titleLabel.textContent = miniGames[activeMiniGame].name;
+        target.textContent = '✓';
+        target.style.left = '50%';
+        target.style.top = '50%';
+      }
+
+      function startMiniGame() {
+        if (!selectedGame) {
+          alert('Select a mini-game first.');
+          return;
+        }
+
+        activeMiniGame = selectedGame;
+        activeGameScore = 0;
+        const config = miniGames[activeMiniGame];
+        const titleLabel = document.getElementById('miniGameTitle');
+        const scoreLabel = document.getElementById('miniGameScore');
+        const statusLabel = document.getElementById('miniGameStatus');
+        const target = document.getElementById('miniGameTarget');
+
+        titleLabel.textContent = config.name;
+        scoreLabel.textContent = `${activeGameScore} pts`;
+        statusLabel.textContent = `Game on! Hit ${config.target} targets before the timer ends.`;
+        target.textContent = '●';
+        moveTarget();
+
+        target.onclick = () => {
+          activeGameScore += 1;
+          scoreLabel.textContent = `${activeGameScore} pts`;
+          if (activeGameScore >= config.target) {
+            statusLabel.textContent = `Nice! ${config.name} complete!`;
+            finishMiniGame();
+            return;
+          }
+          moveTarget();
+        };
+
+        clearInterval(activeGameTimer);
+        activeGameTimer = setInterval(() => {
+          const remaining = config.timeLimit - 1;
+          statusLabel.textContent = `Time left: ${remaining}s — hit the orb!`;
+          if (remaining <= 0) {
+            finishMiniGame();
+          }
+        }, 1000);
+
+        closeGameModal();
+        resetMiniGame();
+      }
+
       function addSelectedGame() {
         if (!selectedGame) {
           alert('Please select a mini game first!');
           return;
         }
 
-        const game = miniGames[selectedGame];
-        alert(`🎮 Added: ${game.name}\n\n${game.description}\n\nMini games feature coming soon!`);
-        closeGameModal();
+        startMiniGame();
       }
 
       document.getElementById('playBtn').addEventListener('click', (e) => {
