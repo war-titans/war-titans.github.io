@@ -3,543 +3,752 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI + Me</title>
+    <title>Animation Studio</title>
     <style>
       :root {
-        --bg: #070b14;
-        --bg-2: #0f172a;
-        --panel: rgba(17, 24, 39, 0.72);
-        --panel-strong: rgba(15, 23, 42, 0.9);
-        --panel-soft: rgba(148, 163, 184, 0.08);
-        --line: rgba(148, 163, 184, 0.17);
-        --text: #e5eefb;
-        --muted: #9aa9bd;
+        --bg: #0a0e1a;
+        --bg-2: #0f1420;
+        --panel: rgba(15, 23, 42, 0.8);
+        --line: rgba(148, 163, 184, 0.15);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
         --purple: #8b5cf6;
         --cyan: #22d3ee;
         --green: #34d399;
-        --orange: #f59e0b;
-        --pink: #f472b6;
-        --shadow: rgba(10, 14, 27, 0.6);
+        --shadow: rgba(0, 0, 0, 0.5);
       }
 
       * { box-sizing: border-box; }
 
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
+      html, body {
         margin: 0;
-        min-height: 100vh;
-        font-family: Inter, "Segoe UI", sans-serif;
+        padding: 0;
+        height: 100%;
+        font-family: Inter, "Segoe UI", monospace;
+        background: linear-gradient(135deg, var(--bg), var(--bg-2));
         color: var(--text);
-        background:
-          radial-gradient(circle at top left, rgba(139, 92, 246, 0.25), transparent 28%),
-          radial-gradient(circle at right center, rgba(34, 211, 238, 0.14), transparent 22%),
-          linear-gradient(140deg, var(--bg), var(--bg-2));
       }
 
-      a {
-        color: inherit;
-        text-decoration: none;
+      .studio {
+        display: grid;
+        grid-template-rows: 50px 1fr 120px;
+        height: 100vh;
+        gap: 1px;
+        background: var(--line);
       }
 
-      .page {
-        width: min(1200px, calc(100% - 32px));
-        margin: 28px auto;
-        background: rgba(8, 12, 20, 0.64);
-        border: 1px solid var(--line);
-        border-radius: 30px;
-        box-shadow: 0 30px 80px var(--shadow);
-        backdrop-filter: blur(12px);
-        overflow: hidden;
-      }
-
+      /* ===== TOP BAR ===== */
       .topbar {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 22px 28px;
+        padding: 0 16px;
+        background: var(--panel);
         border-bottom: 1px solid var(--line);
-        background: rgba(15, 23, 42, 0.32);
       }
 
       .brand {
         display: flex;
         align-items: center;
-        gap: 12px;
-        font-size: 0.9rem;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
+        gap: 10px;
         font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
       }
 
-      .brand-mark {
-        width: 38px;
-        height: 38px;
+      .brand-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, var(--purple), var(--cyan));
         display: grid;
         place-items: center;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        box-shadow: 0 12px 28px rgba(139, 92, 246, 0.34);
+        color: white;
+        font-size: 0.7rem;
       }
 
-      .nav {
+      .topbar-right {
         display: flex;
         align-items: center;
-        gap: 24px;
+        gap: 14px;
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.8rem;
       }
 
-      .nav a:hover {
-        color: var(--text);
-      }
-
-      .nav-button {
-        padding: 10px 16px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: rgba(139, 92, 246, 0.12);
-        color: var(--text);
-        font-weight: 600;
-        transition: 0.2s ease;
-      }
-
-      .nav-button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 14px 24px rgba(139, 92, 246, 0.16);
-      }
-
-      .hero {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 36px;
-        padding: 48px 28px 28px;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: rgba(34, 211, 238, 0.08);
-        border: 1px solid rgba(34, 211, 238, 0.18);
-        color: #bae6fd;
-        font-size: 0.78rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 20px;
-      }
-
-      .eyebrow::before {
-        content: "";
+      .status-dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
         background: var(--green);
-        box-shadow: 0 0 14px rgba(52, 211, 153, 0.8);
+        box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
       }
 
-      h1 {
-        margin: 0;
-        font-size: clamp(2.8rem, 6vw, 5.2rem);
-        line-height: 0.92;
-        letter-spacing: -0.06em;
+      /* ===== MAIN WORKSPACE ===== */
+      .workspace {
+        display: grid;
+        grid-template-columns: 280px 1fr 240px;
+        gap: 1px;
+        background: var(--line);
+        overflow: hidden;
       }
 
-      .gradient-text {
-        background: linear-gradient(135deg, #fff 0%, #c4b5fd 25%, #67e8f9 65%, #f9a8d4 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+      .sidebar, .inspector {
+        background: var(--panel);
+        overflow-y: auto;
+        padding: 16px;
+        border-right: 1px solid var(--line);
       }
 
-      .subtext {
-        margin: 18px 0 0;
-        max-width: 620px;
+      .inspector {
+        border-right: none;
+      }
+
+      .panel-title {
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
         color: var(--muted);
-        font-size: 1.08rem;
-        line-height: 1.7;
-      }
-
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-top: 26px;
-      }
-
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 15px 20px;
-        border-radius: 16px;
+        margin: 0 0 12px 0;
         font-weight: 700;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
-      .button:hover {
-        transform: translateY(-1px);
+      .section {
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--line);
       }
 
-      .button.primary {
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        color: white;
-        box-shadow: 0 18px 32px rgba(139, 92, 246, 0.3);
+      .section:last-child {
+        border-bottom: none;
       }
 
-      .button.secondary {
-        background: rgba(148, 163, 184, 0.08);
+      /* ===== SIDEBAR CONTROLS ===== */
+      input[type="text"],
+      input[type="range"],
+      select {
+        width: 100%;
+        padding: 8px 10px;
         border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(148, 163, 184, 0.06);
         color: var(--text);
+        font-family: inherit;
+        font-size: 0.85rem;
+        margin-bottom: 10px;
       }
 
-      .stats {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-top: 28px;
+      input[type="range"] {
+        accent-color: var(--purple);
       }
 
-      .stat {
-        min-width: 120px;
-      }
-
-      .stat strong {
+      label {
         display: block;
-        font-size: 1.6rem;
-        font-weight: 800;
-      }
-
-      .stat span {
-        display: block;
-        margin-top: 6px;
+        font-size: 0.75rem;
         color: var(--muted);
-        font-size: 0.8rem;
+        margin-bottom: 6px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
-      .mockup {
-        position: relative;
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(11, 16, 26, 0.96));
+      button {
+        padding: 10px 12px;
         border: 1px solid var(--line);
-        border-radius: 26px;
-        padding: 18px;
-        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.06);
-      }
-
-      .mini-window {
-        border-radius: 18px;
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid var(--line);
-        overflow: hidden;
-      }
-
-      .mini-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 14px;
-        border-bottom: 1px solid var(--line);
-        background: rgba(148, 163, 184, 0.04);
-      }
-
-      .circle {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-      }
-
-      .circle.red { background: #f87171; }
-      .circle.yellow { background: #fbbf24; }
-      .circle.green { background: #34d399; }
-
-      .mini-body {
-        padding: 18px;
-      }
-
-      .prompt-box {
-        padding: 14px 16px;
-        background: rgba(139, 92, 246, 0.08);
-        border: 1px solid rgba(139, 92, 246, 0.2);
-        border-radius: 14px;
-        color: #ddd6fe;
-        font-size: 0.92rem;
-        line-height: 1.6;
-      }
-
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
-        padding: 0 28px 28px;
-      }
-
-      .feature-card {
-        background: rgba(15, 23, 42, 0.68);
-        border: 1px solid var(--line);
-        border-radius: 22px;
-        padding: 20px;
-        min-height: 210px;
-      }
-
-      .icon {
-        width: 48px;
-        height: 48px;
-        display: grid;
-        place-items: center;
-        border-radius: 14px;
-        margin-bottom: 18px;
-        font-size: 1.25rem;
+        border-radius: 8px;
         background: rgba(139, 92, 246, 0.12);
-        border: 1px solid rgba(139, 92, 246, 0.2);
+        color: var(--text);
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: 0.15s ease;
+        width: 100%;
+        margin-bottom: 8px;
       }
 
-      .feature-card:nth-child(2) .icon {
-        background: rgba(34, 211, 238, 0.12);
-        border-color: rgba(34, 211, 238, 0.2);
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px rgba(139, 92, 246, 0.2);
       }
 
-      .feature-card:nth-child(3) .icon {
-        background: rgba(52, 211, 153, 0.12);
+      button:active {
+        transform: translateY(0);
+      }
+
+      button.secondary {
+        background: rgba(52, 211, 153, 0.08);
         border-color: rgba(52, 211, 153, 0.2);
       }
 
-      .feature-card h3 {
-        margin: 0 0 10px;
-        font-size: 1.2rem;
-      }
-
-      .feature-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.7;
-      }
-
-      .tag-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 18px;
-      }
-
-      .tag {
-        padding: 7px 10px;
-        border-radius: 999px;
-        color: #dbeafe;
-        background: rgba(148, 163, 184, 0.06);
-        border: 1px solid var(--line);
-        font-size: 0.75rem;
-      }
-
-      .bottom-panel {
-        padding: 0 28px 34px;
-      }
-
-      .workflow {
+      /* ===== CANVAS AREA ===== */
+      .canvas-area {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid var(--line);
-        border-radius: 24px;
-        padding: 22px;
+        grid-template-rows: 1fr auto;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.6), rgba(11, 16, 26, 0.6));
+        position: relative;
       }
 
-      .step {
-        padding: 18px;
-        border-radius: 18px;
-        background: rgba(148, 163, 184, 0.04);
-        border: 1px solid rgba(148, 163, 184, 0.08);
+      .canvas-viewport {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(20, 28, 44, 0.8));
       }
 
-      .step-number {
-        display: inline-flex;
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ===== TIMELINE ===== */
+      .timeline {
+        background: var(--panel);
+        border-top: 1px solid var(--line);
+        padding: 12px;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+
+      .timeline-header {
+        display: flex;
         align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        color: white;
-        font-weight: 700;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .timeline-controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .play-btn {
+        width: 32px !important;
+        height: 32px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 6px;
+        display: grid;
+        place-items: center;
+        font-size: 0.7rem;
+      }
+
+      .timeline-bar {
+        width: 100%;
+        height: 3px;
+        background: rgba(148, 163, 184, 0.1);
+        border-radius: 2px;
+        position: relative;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      .timeline-progress {
+        height: 100%;
+        background: linear-gradient(90deg, var(--purple), var(--cyan));
+        border-radius: 2px;
+        position: relative;
+      }
+
+      .timeline-progress::after {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 50%;
+        right: -5px;
+        top: -3.5px;
+        box-shadow: 0 2px 8px var(--shadow);
+      }
+
+      /* ===== KEYFRAME STRIP ===== */
+      .keyframe-strip {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+        padding: 8px 0;
+        flex-wrap: wrap;
+      }
+
+      .keyframe {
+        width: 24px;
+        height: 24px;
+        background: rgba(139, 92, 246, 0.2);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: 0.1s ease;
+        font-size: 0.65rem;
+        display: grid;
+        place-items: center;
+      }
+
+      .keyframe:hover {
+        background: rgba(139, 92, 246, 0.4);
+      }
+
+      .keyframe.active {
+        background: var(--purple);
+        border-color: var(--purple);
+        box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+      }
+
+      /* ===== INSPECTOR ===== */
+      .property-row {
+        margin-bottom: 14px;
+      }
+
+      .value-display {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .value-box {
+        padding: 8px 10px;
+        background: rgba(148, 163, 184, 0.08);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .value-box strong {
+        display: block;
+        color: var(--text);
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+      }
+
+      /* ===== GUIDE PANEL ===== */
+      .guide {
+        background: rgba(34, 211, 238, 0.06);
+        border: 1px solid rgba(34, 211, 238, 0.15);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: #bae6fd;
         margin-bottom: 12px;
       }
 
-      .step h4 {
-        margin: 0 0 8px;
-        font-size: 1.05rem;
+      .guide-title {
+        font-weight: 700;
+        color: var(--cyan);
+        margin-bottom: 6px;
       }
 
-      .step p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      @media (max-width: 900px) {
-        .hero,
-        .cards,
-        .workflow {
+      @media (max-width: 1200px) {
+        .workspace {
           grid-template-columns: 1fr;
         }
 
-        .nav {
+        .sidebar, .inspector {
           display: none;
         }
+      }
 
-        .topbar {
-          padding: 18px 20px;
-        }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
 
-        .hero,
-        .cards,
-        .bottom-panel {
-          padding-left: 20px;
-          padding-right: 20px;
-        }
+      ::-webkit-scrollbar-track {
+        background: rgba(148, 163, 184, 0.05);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(139, 92, 246, 0.3);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(139, 92, 246, 0.5);
       }
     </style>
   </head>
   <body>
-    <div class="page">
+    <div class="studio">
+      <!-- TOP BAR -->
       <header class="topbar">
         <div class="brand">
-          <div class="brand-mark">✦</div>
-          <span>AI + Me</span>
+          <div class="brand-icon">▶</div>
+          <span>Animation Studio</span>
         </div>
-
-        <nav class="nav" aria-label="Main navigation">
-          <a href="#features">Features</a>
-          <a href="#studio">Studio</a>
-          <a href="#workflow">Flow</a>
-        </nav>
-
-        <a href="#studio" class="nav-button">Launch</a>
+        <div class="topbar-right">
+          <span class="status-dot"></span>
+          <span>Ready to animate</span>
+        </div>
       </header>
 
-      <main>
-        <section class="hero">
-          <div>
-            <div class="eyebrow">creative system</div>
-            <h1>
-              Build ideas<br />
-              with <span class="gradient-text">AI + Me</span>
-            </h1>
-            <p class="subtext">
-              Turn rough thoughts into visual direction, creative prompts, and polished concepts.
-              This workspace is built to help you explore, sketch, and shape your next big idea.
-            </p>
+      <!-- MAIN WORKSPACE -->
+      <div class="workspace">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+          <h3 class="panel-title">Objects</h3>
 
-            <div class="actions">
-              <a href="#studio" class="button primary">Start creating</a>
-              <a href="#features" class="button secondary">See features</a>
-            </div>
+          <div class="section">
+            <label>Name</label>
+            <input type="text" id="objectName" value="Square" />
+            <button class="secondary" id="addObjectBtn">+ New Object</button>
+          </div>
 
-            <div class="stats">
-              <div class="stat">
-                <strong>24/7</strong>
-                <span>Creative flow</span>
-              </div>
-              <div class="stat">
-                <strong>8x</strong>
-                <span>Faster ideas</span>
-              </div>
-              <div class="stat">
-                <strong>∞</strong>
-                <span>Inspiration</span>
-              </div>
+          <h3 class="panel-title" style="margin-top: 18px;">Shape</h3>
+          <div class="section">
+            <label>Type</label>
+            <select id="shapeType">
+              <option>Square</option>
+              <option>Circle</option>
+              <option>Triangle</option>
+              <option>Star</option>
+            </select>
+          </div>
+
+          <h3 class="panel-title" style="margin-top: 18px;">Color</h3>
+          <div class="section">
+            <label>Fill</label>
+            <input type="text" id="colorInput" value="#8b5cf6" />
+          </div>
+
+          <h3 class="panel-title" style="margin-top: 18px;">Animation Basics</h3>
+          <div class="guide">
+            <div class="guide-title">How to animate:</div>
+            <div>
+              1. Set a keyframe at start (frame 0)<br/>
+              2. Move slider to frame 30<br/>
+              3. Change position/size/color<br/>
+              4. Set keyframe at frame 30<br/>
+              5. Press PLAY
             </div>
           </div>
 
-          <div class="mockup" id="studio">
-            <div class="mini-window">
-              <div class="mini-header">
-                <span class="circle red"></span>
-                <span class="circle yellow"></span>
-                <span class="circle green"></span>
+          <button id="clearAnimBtn">Clear Animation</button>
+        </aside>
+
+        <!-- CENTER CANVAS -->
+        <div class="canvas-area">
+          <div class="canvas-viewport">
+            <canvas id="canvas"></canvas>
+          </div>
+
+          <!-- TIMELINE -->
+          <div class="timeline">
+            <div class="timeline-header">
+              <h3 class="panel-title">Timeline</h3>
+              <div class="timeline-controls">
+                <button class="play-btn" id="playBtn">▶</button>
+                <button class="play-btn" id="stopBtn">⏹</button>
               </div>
-              <div class="mini-body">
-                <div class="prompt-box">
-                  “A calm neon city at sunrise, where ideas float like glowing leaves and a human hand guides the future.”
-                </div>
-                <div class="tag-row" style="margin-top: 18px;">
-                  <span class="tag">Neon</span>
-                  <span class="tag">Dream</span>
-                  <span class="tag">Minimal</span>
-                  <span class="tag">Future</span>
-                </div>
-              </div>
+            </div>
+
+            <div class="timeline-bar" id="timelineBar">
+              <div class="timeline-progress" id="timelineProgress"></div>
+            </div>
+
+            <div class="keyframe-strip" id="keyframeStrip"></div>
+
+            <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">
+              <label style="margin: 0; flex: 1;">Frame: <strong id="frameDisplay">0</strong> / 60</label>
+              <input type="range" id="frameSlider" min="0" max="60" value="0" style="margin: 0; flex: 2;" />
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="cards" id="features">
-          <article class="feature-card">
-            <div class="icon">✦</div>
-            <h3>Prompt Lab</h3>
-            <p>
-              Sketch your concept, refine the mood, and turn it into a focused creative direction.
-            </p>
-            <div class="tag-row">
-              <span class="tag">Ideas</span>
-              <span class="tag">Mood</span>
-            </div>
-          </article>
+        <!-- RIGHT INSPECTOR -->
+        <aside class="inspector">
+          <h3 class="panel-title">Properties</h3>
 
-          <article class="feature-card">
-            <div class="icon">✎</div>
-            <h3>Canvas Mode</h3>
-            <p>
-              Draw, write, and experiment visually without losing the clarity of your original spark.
-            </p>
-            <div class="tag-row">
-              <span class="tag">Sketch</span>
-              <span class="tag">Color</span>
-            </div>
-          </article>
-
-          <article class="feature-card">
-            <div class="icon">✓</div>
-            <h3>Ship it</h3>
-            <p>
-              Turn inspiration into a polished concept you can use, share, or expand into your next project.
-            </p>
-            <div class="tag-row">
-              <span class="tag">Launch</span>
-              <span class="tag">Share</span>
-            </div>
-          </article>
-        </section>
-
-        <section class="bottom-panel" id="workflow">
-          <div class="workflow">
-            <div class="step">
-              <div class="step-number">1</div>
-              <h4>Imagine</h4>
-              <p>Start with a feeling, a theme, or a single sentence that points to your direction.</p>
-            </div>
-
-            <div class="step">
-              <div class="step-number">2</div>
-              <h4>Shape</h4>
-              <p>Refine the concept using colors, prompts, layouts, and visual experiments.</p>
-            </div>
-
-            <div class="step">
-              <div class="step-number">3</div>
-              <h4>Build</h4>
-              <p>Turn your creative direction into a finished product or a strong next idea.</p>
+          <div class="section">
+            <label>Position X</label>
+            <div class="value-display">
+              <input type="range" id="posX" min="0" max="800" value="400" />
+              <div class="value-box"><strong id="posXValue">400</strong>px</div>
             </div>
           </div>
-        </section>
-      </main>
+
+          <div class="section">
+            <label>Position Y</label>
+            <div class="value-display">
+              <input type="range" id="posY" min="0" max="400" value="200" />
+              <div class="value-box"><strong id="posYValue">200</strong>px</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <label>Size</label>
+            <div class="value-display">
+              <input type="range" id="size" min="10" max="200" value="60" />
+              <div class="value-box"><strong id="sizeValue">60</strong>px</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <label>Rotation</label>
+            <div class="value-display">
+              <input type="range" id="rotation" min="0" max="360" value="0" />
+              <div class="value-box"><strong id="rotationValue">0</strong>°</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <label>Opacity</label>
+            <div class="value-display">
+              <input type="range" id="opacity" min="0" max="100" value="100" />
+              <div class="value-box"><strong id="opacityValue">100</strong>%</div>
+            </div>
+          </div>
+
+          <button class="secondary" id="setKeyframeBtn">📌 Set Keyframe</button>
+        </aside>
+      </div>
     </div>
+
+    <script>
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Setup canvas size
+      function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Animation state
+      let isPlaying = false;
+      let currentFrame = 0;
+      let totalFrames = 60;
+      let animationSpeed = 1000 / 30; // 30 FPS
+
+      // Object data
+      let object = {
+        name: 'Square',
+        type: 'Square',
+        color: '#8b5cf6',
+        keyframes: {
+          0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 },
+          30: { x: 200, y: 150, size: 80, rotation: 180, opacity: 100 },
+          60: { x: 400, y: 200, size: 60, rotation: 360, opacity: 100 }
+        }
+      };
+
+      // Interpolation
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function getInterpolatedValue(keyframes, frame) {
+        const frames = Object.keys(keyframes).map(Number).sort((a, b) => a - b);
+        
+        let before = frames[0];
+        let after = frames[frames.length - 1];
+
+        for (let i = 0; i < frames.length - 1; i++) {
+          if (frame >= frames[i] && frame <= frames[i + 1]) {
+            before = frames[i];
+            after = frames[i + 1];
+            break;
+          }
+        }
+
+        if (before === after) {
+          return keyframes[before];
+        }
+
+        const t = (frame - before) / (after - before);
+        const kf1 = keyframes[before];
+        const kf2 = keyframes[after];
+
+        return {
+          x: lerp(kf1.x, kf2.x, t),
+          y: lerp(kf1.y, kf2.y, t),
+          size: lerp(kf1.size, kf2.size, t),
+          rotation: lerp(kf1.rotation, kf2.rotation, t),
+          opacity: lerp(kf1.opacity, kf2.opacity, t)
+        };
+      }
+
+      // Draw function
+      function drawFrame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const state = getInterpolatedValue(object.keyframes, currentFrame);
+
+        ctx.save();
+        ctx.globalAlpha = state.opacity / 100;
+        ctx.translate(state.x, state.y);
+        ctx.rotate((state.rotation * Math.PI) / 180);
+        ctx.fillStyle = object.color;
+
+        if (object.type === 'Square') {
+          ctx.fillRect(-state.size / 2, -state.size / 2, state.size, state.size);
+        } else if (object.type === 'Circle') {
+          ctx.beginPath();
+          ctx.arc(0, 0, state.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (object.type === 'Triangle') {
+          ctx.beginPath();
+          ctx.moveTo(0, -state.size / 2);
+          ctx.lineTo(state.size / 2, state.size / 2);
+          ctx.lineTo(-state.size / 2, state.size / 2);
+          ctx.closePath();
+          ctx.fill();
+        } else if (object.type === 'Star') {
+          drawStar(0, 0, state.size / 2);
+        }
+
+        ctx.restore();
+      }
+
+      function drawStar(cx, cy, r) {
+        let points = 5;
+        let angle = (Math.PI * 2) / points;
+        ctx.beginPath();
+        for (let i = 0; i < points * 2; i++) {
+          const radius = i % 2 === 0 ? r : r * 0.5;
+          const x = cx + Math.cos(i * angle - Math.PI / 2) * radius;
+          const y = cy + Math.sin(i * angle - Math.PI / 2) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Animation loop
+      function animate() {
+        drawFrame();
+        
+        if (isPlaying) {
+          currentFrame += 1;
+          if (currentFrame > totalFrames) {
+            currentFrame = 0;
+          }
+          updateUI();
+          setTimeout(animate, animationSpeed);
+        } else {
+          drawFrame();
+        }
+      }
+
+      // Update UI
+      function updateUI() {
+        document.getElementById('frameDisplay').textContent = currentFrame;
+        document.getElementById('frameSlider').value = currentFrame;
+        document.getElementById('timelineProgress').style.width = (currentFrame / totalFrames) * 100 + '%';
+
+        const state = getInterpolatedValue(object.keyframes, currentFrame);
+        document.getElementById('posXValue').textContent = Math.round(state.x);
+        document.getElementById('posYValue').textContent = Math.round(state.y);
+        document.getElementById('sizeValue').textContent = Math.round(state.size);
+        document.getElementById('rotationValue').textContent = Math.round(state.rotation);
+        document.getElementById('opacityValue').textContent = Math.round(state.opacity);
+      }
+
+      function renderKeyframes() {
+        const strip = document.getElementById('keyframeStrip');
+        strip.innerHTML = '';
+        
+        for (let i = 0; i <= totalFrames; i += 5) {
+          const kf = document.createElement('button');
+          kf.className = 'keyframe' + (object.keyframes[i] ? ' active' : '');
+          kf.textContent = i;
+          kf.onclick = () => {
+            currentFrame = i;
+            updateUI();
+            drawFrame();
+          };
+          strip.appendChild(kf);
+        }
+      }
+
+      // Event listeners
+      document.getElementById('playBtn').addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        animate();
+      });
+
+      document.getElementById('stopBtn').addEventListener('click', () => {
+        isPlaying = false;
+        currentFrame = 0;
+        updateUI();
+        drawFrame();
+      });
+
+      document.getElementById('frameSlider').addEventListener('input', (e) => {
+        currentFrame = Number(e.target.value);
+        updateUI();
+        drawFrame();
+      });
+
+      document.getElementById('setKeyframeBtn').addEventListener('click', () => {
+        object.keyframes[currentFrame] = {
+          x: Number(document.getElementById('posX').value),
+          y: Number(document.getElementById('posY').value),
+          size: Number(document.getElementById('size').value),
+          rotation: Number(document.getElementById('rotation').value),
+          opacity: Number(document.getElementById('opacity').value)
+        };
+        renderKeyframes();
+        drawFrame();
+      });
+
+      document.getElementById('shapeType').addEventListener('change', (e) => {
+        object.type = e.target.value;
+        drawFrame();
+      });
+
+      document.getElementById('colorInput').addEventListener('change', (e) => {
+        object.color = e.target.value;
+        drawFrame();
+      });
+
+      document.getElementById('posX').addEventListener('input', (e) => {
+        document.getElementById('posXValue').textContent = e.target.value;
+        drawFrame();
+      });
+
+      document.getElementById('posY').addEventListener('input', (e) => {
+        document.getElementById('posYValue').textContent = e.target.value;
+        drawFrame();
+      });
+
+      document.getElementById('size').addEventListener('input', (e) => {
+        document.getElementById('sizeValue').textContent = e.target.value;
+        drawFrame();
+      });
+
+      document.getElementById('rotation').addEventListener('input', (e) => {
+        document.getElementById('rotationValue').textContent = e.target.value;
+        drawFrame();
+      });
+
+      document.getElementById('opacity').addEventListener('input', (e) => {
+        document.getElementById('opacityValue').textContent = e.target.value;
+        drawFrame();
+      });
+
+      document.getElementById('clearAnimBtn').addEventListener('click', () => {
+        object.keyframes = {
+          0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 }
+        };
+        renderKeyframes();
+        drawFrame();
+      });
+
+      document.getElementById('timelineBar').addEventListener('click', (e) => {
+        const rect = e.target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percent = x / rect.width;
+        currentFrame = Math.round(percent * totalFrames);
+        updateUI();
+        drawFrame();
+      });
+
+      // Initial render
+      renderKeyframes();
+      updateUI();
+      drawFrame();
+    </script>
   </body>
 </html>
