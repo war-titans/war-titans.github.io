@@ -398,10 +398,11 @@
       }
 
       .flappy-bird {
-        position: relative;
-        width: 100px;
-        height: 100px;
-        margin: 0 auto;
+        position: absolute;
+        left: 40px;
+        top: 150px;
+        width: 42px;
+        height: 42px;
         background: var(--cyan);
         border-radius: 50%;
         box-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
@@ -747,7 +748,6 @@
     </style>
   </head>
   <body>
-    <!-- HOME MENU -->
     <div class="home-menu active" id="homeMenu">
       <div class="home-content">
         <h1 class="home-title">✨ Creative Studio</h1>
@@ -765,7 +765,6 @@
       </div>
     </div>
 
-    <!-- GAMES MENU -->
     <div class="menu-overlay" id="menuOverlay">
       <div class="menu-content">
         <h1 class="menu-title">🎮 Play Games</h1>
@@ -777,7 +776,6 @@
       </div>
     </div>
 
-    <!-- GAME CONTAINER -->
     <div class="game-container" id="gameContainer">
       <div class="game-header">
         <div></div>
@@ -794,7 +792,6 @@
       </div>
     </div>
 
-    <!-- ANIMATION STUDIO -->
     <div class="studio" id="studio">
       <header class="topbar">
         <div class="topbar-left">
@@ -930,15 +927,13 @@
     </div>
 
     <script>
-      // Navigation Functions
       function showHomeMenu() {
         document.getElementById('homeMenu').classList.add('active');
         document.getElementById('studio').classList.remove('active');
         document.getElementById('menuOverlay').classList.remove('active');
         document.getElementById('gameContainer').classList.remove('active');
-        if (gameLoop) clearInterval(gameLoop);
-        gameRunning = false;
-        isPlaying = false;
+        stopGameLoop();
+        stopAnimationLoop();
       }
 
       function showStudio() {
@@ -946,6 +941,8 @@
         document.getElementById('studio').classList.add('active');
         document.getElementById('menuOverlay').classList.remove('active');
         document.getElementById('gameContainer').classList.remove('active');
+        stopGameLoop();
+        stopAnimationLoop();
         resizeCanvas();
       }
 
@@ -954,9 +951,10 @@
         document.getElementById('studio').classList.remove('active');
         document.getElementById('menuOverlay').classList.add('active');
         document.getElementById('gameContainer').classList.remove('active');
+        stopGameLoop();
+        stopAnimationLoop();
       }
 
-      // Navigation Event Listeners
       document.getElementById('toStudioBtn').addEventListener('click', showStudio);
       document.getElementById('toGamesBtn').addEventListener('click', showGamesMenu);
       document.getElementById('studioHomeBtn').addEventListener('click', showHomeMenu);
@@ -969,7 +967,6 @@
       document.getElementById('gameHomeBtn').addEventListener('click', showHomeMenu);
       document.getElementById('gameHomeBtn2').addEventListener('click', showHomeMenu);
 
-      // Canvas Setup
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
 
@@ -1015,25 +1012,10 @@
         { name: 'Flappy', icon: '🚀', id: 'flappy' }
       ];
 
-      let gameState = {
-        snake: { body: [[5, 5]], direction: [1, 0], food: [8, 8], score: 0 },
-        memory: { cards: [], flipped: [], matched: 0, score: 0 },
-        flappy: { y: 150, vy: 0, score: 0, pipes: [] }
-      };
-
       let currentGame = null;
       let gameRunning = false;
       let gameLoop = null;
-
-      function resizeCanvas() {
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = Math.max(300, rect.width);
-        canvas.height = Math.max(220, rect.height);
-      }
-
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-
+      let animationTimer = null;
       let isPlaying = false;
       let currentFrame = 0;
       let totalFrames = 60;
@@ -1048,6 +1030,38 @@
           60: { x: 400, y: 200, size: 60, rotation: 360, opacity: 100 }
         }
       };
+
+      let gameState = {
+        snake: { body: [[5, 5]], direction: [1, 0], food: [8, 8], score: 0 },
+        memory: { cards: [], flipped: [], matched: 0, score: 0 },
+        flappy: { y: 150, vy: 0, score: 0, pipes: [] }
+      };
+
+      function stopAnimationLoop() {
+        if (animationTimer) {
+          clearTimeout(animationTimer);
+          animationTimer = null;
+        }
+        isPlaying = false;
+      }
+
+      function stopGameLoop() {
+        if (gameLoop) {
+          clearInterval(gameLoop);
+          gameLoop = null;
+        }
+        gameRunning = false;
+      }
+
+      function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = Math.max(300, rect.width);
+        canvas.height = Math.max(220, rect.height);
+        draw();
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
 
       function clampFrameCount(value) {
         const frameValue = Number(value);
@@ -1184,16 +1198,15 @@
       }
 
       function animationLoop() {
-        draw();
+        if (!isPlaying) return;
 
-        if (isPlaying) {
-          currentFrame += 1;
-          if (currentFrame > totalFrames) {
-            currentFrame = 0;
-          }
-          updateDisplay();
-          setTimeout(animationLoop, animationSpeed);
+        draw();
+        currentFrame += 1;
+        if (currentFrame > totalFrames) {
+          currentFrame = 0;
         }
+        updateDisplay();
+        animationTimer = setTimeout(animationLoop, animationSpeed);
       }
 
       function applyPreset(name) {
@@ -1210,23 +1223,10 @@
         document.getElementById('shapeType').value = preset.shapeType;
         document.getElementById('colorInput').value = preset.color;
         currentFrame = 0;
-        isPlaying = false;
+        stopAnimationLoop();
         updateDisplay();
         renderKeyframes();
         draw();
-      }
-
-      // Game Logic
-      function showGameContainer() {
-        document.getElementById('gameContainer').classList.add('active');
-      }
-
-      function startGame(gameId) {
-        document.getElementById('menuOverlay').classList.remove('active');
-        currentGame = gameId;
-        showGameContainer();
-        resetGame(gameId);
-        runGame(gameId);
       }
 
       function resetGame(gameId) {
@@ -1246,6 +1246,20 @@
           gameState.flappy = { y: 150, vy: 0, score: 0, pipes: [] };
           renderFlappy();
         }
+      }
+
+      function showGameContainer() {
+        document.getElementById('gameContainer').classList.add('active');
+      }
+
+      function startGame(gameId) {
+        stopAnimationLoop();
+        stopGameLoop();
+        document.getElementById('menuOverlay').classList.remove('active');
+        currentGame = gameId;
+        showGameContainer();
+        resetGame(gameId);
+        runGame(gameId);
       }
 
       function renderSnake() {
@@ -1271,10 +1285,12 @@
         head[0] += gameState.snake.direction[0];
         head[1] += gameState.snake.direction[1];
 
-        if (head[0] < 0 || head[0] >= 10 || head[1] < 0 || head[1] >= 10 || 
-            gameState.snake.body.some(b => b[0] === head[0] && b[1] === head[1])) {
+        if (
+          head[0] < 0 || head[0] >= 10 || head[1] < 0 || head[1] >= 10 ||
+          gameState.snake.body.some(b => b[0] === head[0] && b[1] === head[1])
+        ) {
           document.getElementById('gameScore').textContent = `Game Over! Final Score: ${gameState.snake.score}`;
-          gameRunning = false;
+          stopGameLoop();
           return;
         }
 
@@ -1282,7 +1298,9 @@
 
         if (head[0] === gameState.snake.food[0] && head[1] === gameState.snake.food[1]) {
           gameState.snake.score += 10;
-          gameState.snake.food = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+          do {
+            gameState.snake.food = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+          } while (gameState.snake.body.some(b => b[0] === gameState.snake.food[0] && b[1] === gameState.snake.food[1]));
         } else {
           gameState.snake.body.pop();
         }
@@ -1308,22 +1326,26 @@
       }
 
       function flipMemoryCard(i) {
-        if (gameState.memory.flipped[i] || gameState.memory.flipped.filter(f => f).length >= 2) return;
+        if (gameState.memory.flipped[i] || gameState.memory.flipped.filter(Boolean).length >= 2) return;
+
         gameState.memory.flipped[i] = true;
         renderMemory();
 
-        const flipped = gameState.memory.flipped.map((f, idx) => f ? idx : -1).filter(i => i >= 0);
-        if (flipped.length === 2) {
+        const flippedIndexes = gameState.memory.flipped.map((item, index) => (item ? index : -1)).filter(index => index >= 0);
+
+        if (flippedIndexes.length === 2) {
           setTimeout(() => {
-            if (gameState.memory.cards[flipped[0]] === gameState.memory.cards[flipped[1]]) {
-              gameState.memory.matched++;
+            const [a, b] = flippedIndexes;
+            if (gameState.memory.cards[a] === gameState.memory.cards[b]) {
+              gameState.memory.matched += 1;
               if (gameState.memory.matched === 8) {
                 document.getElementById('gameScore').textContent = 'You Won! 🎉';
-                gameRunning = false;
+                stopGameLoop();
+                return;
               }
             } else {
-              gameState.memory.flipped[flipped[0]] = false;
-              gameState.memory.flipped[flipped[1]] = false;
+              gameState.memory.flipped[a] = false;
+              gameState.memory.flipped[b] = false;
             }
             renderMemory();
           }, 500);
@@ -1333,23 +1355,29 @@
       function renderFlappy() {
         const gameArea = document.getElementById('gameArea');
         gameArea.innerHTML = '';
+        gameArea.style.position = 'relative';
+
         const bird = document.createElement('div');
         bird.className = 'flappy-bird';
         bird.style.top = gameState.flappy.y + 'px';
+        bird.style.left = '40px';
+        bird.style.position = 'absolute';
         gameArea.appendChild(bird);
+
         gameState.flappy.pipes.forEach(pipe => {
-          const p = document.createElement('div');
-          p.className = 'pipe';
-          p.style.left = pipe.x + 'px';
-          p.style.top = '0';
-          p.style.height = pipe.gap + 'px';
-          gameArea.appendChild(p);
-          const p2 = document.createElement('div');
-          p2.className = 'pipe';
-          p2.style.left = pipe.x + 'px';
-          p2.style.top = (pipe.gap + 80) + 'px';
-          p2.style.height = (300 - pipe.gap - 80) + 'px';
-          gameArea.appendChild(p2);
+          const topPipe = document.createElement('div');
+          topPipe.className = 'pipe';
+          topPipe.style.left = pipe.x + 'px';
+          topPipe.style.top = '0';
+          topPipe.style.height = pipe.gap + 'px';
+          gameArea.appendChild(topPipe);
+
+          const bottomPipe = document.createElement('div');
+          bottomPipe.className = 'pipe';
+          bottomPipe.style.left = pipe.x + 'px';
+          bottomPipe.style.bottom = '0';
+          bottomPipe.style.height = (300 - pipe.gap - 90) + 'px';
+          gameArea.appendChild(bottomPipe);
         });
       }
 
@@ -1359,25 +1387,40 @@
 
         if (gameState.flappy.y > 280 || gameState.flappy.y < 0) {
           document.getElementById('gameScore').textContent = `Game Over! Score: ${gameState.flappy.score}`;
-          gameRunning = false;
+          stopGameLoop();
           return;
         }
 
-        gameState.flappy.pipes = gameState.flappy.pipes.filter(p => p.x > -60);
-        if (gameState.flappy.pipes.length === 0 || gameState.flappy.pipes[gameState.flappy.pipes.length - 1].x < 200) {
-          gameState.flappy.pipes.push({ x: 500, gap: Math.random() * 100 + 80 });
+        gameState.flappy.pipes = gameState.flappy.pipes.filter(pipe => pipe.x > -60);
+
+        if (gameState.flappy.pipes.length === 0 || gameState.flappy.pipes[gameState.flappy.pipes.length - 1].x < 220) {
+          gameState.flappy.pipes.push({
+            x: 500,
+            gap: Math.random() * 100 + 80,
+            scored: false
+          });
         }
 
+        const birdX = 40;
+        const birdY = gameState.flappy.y;
+        const birdWidth = 42;
+        const birdHeight = 42;
+
         gameState.flappy.pipes.forEach(pipe => {
-          if (pipe.x + 40 > 50 && pipe.x < 100) {
-            if (gameState.flappy.y < pipe.gap || gameState.flappy.y + 40 > pipe.gap + 80) {
-              document.getElementById('gameScore').textContent = `Game Over! Score: ${gameState.flappy.score}`;
-              gameRunning = false;
-              return;
-            }
-            if (pipe.x === 50) gameState.flappy.score += 1;
-          }
           pipe.x -= 4;
+
+          if (!pipe.scored && pipe.x + 60 < birdX) {
+            pipe.scored = true;
+            gameState.flappy.score += 1;
+          }
+
+          if (
+            pipe.x < birdX + birdWidth && pipe.x + 60 > birdX &&
+            (birdY < pipe.gap || birdY + birdHeight > pipe.gap + 90)
+          ) {
+            document.getElementById('gameScore').textContent = `Game Over! Score: ${gameState.flappy.score}`;
+            stopGameLoop();
+          }
         });
 
         document.getElementById('gameScore').textContent = `Score: ${gameState.flappy.score}`;
@@ -1386,18 +1429,17 @@
 
       function runGame(gameId) {
         gameRunning = true;
-        if (gameLoop) clearInterval(gameLoop);
-        gameLoop = setInterval(() => {
-          if (!gameRunning) {
-            clearInterval(gameLoop);
-            return;
-          }
-          if (gameId === 'snake') updateSnake();
-          else if (gameId === 'flappy') updateFlappy();
-        }, gameId === 'snake' ? 200 : 50);
+        stopGameLoop();
+
+        if (gameId === 'snake') {
+          gameLoop = setInterval(updateSnake, 200);
+        } else if (gameId === 'flappy') {
+          gameLoop = setInterval(updateFlappy, 50);
+        } else if (gameId === 'memory') {
+          gameLoop = null;
+        }
       }
 
-      // Games Menu Setup
       const grid = document.getElementById('menuGrid');
       games.forEach(game => {
         const btn = document.createElement('button');
@@ -1407,16 +1449,16 @@
         grid.appendChild(btn);
       });
 
-      // Studio Event Listeners
       document.getElementById('playBtn').addEventListener('click', (e) => {
         e.preventDefault();
+        stopAnimationLoop();
         isPlaying = true;
         animationLoop();
       });
 
       document.getElementById('stopBtn').addEventListener('click', (e) => {
         e.preventDefault();
-        isPlaying = false;
+        stopAnimationLoop();
         currentFrame = 0;
         updateDisplay();
         draw();
@@ -1455,7 +1497,7 @@
           0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 }
         };
         currentFrame = 0;
-        isPlaying = false;
+        stopAnimationLoop();
         renderKeyframes();
         updateDisplay();
         draw();
@@ -1504,7 +1546,6 @@
         applyTiming();
       });
 
-      // Game Controls
       document.addEventListener('keydown', (e) => {
         if (currentGame === 'snake') {
           if (e.key === 'ArrowUp' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, -1];
