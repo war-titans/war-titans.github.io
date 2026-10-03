@@ -433,6 +433,18 @@
             <input type="color" id="colorInput" value="#8b5cf6" />
           </div>
 
+          <div class="section">
+            <label>Frame Count</label>
+            <input id="frameCountInput" type="number" min="12" max="240" step="1" value="60" />
+          </div>
+
+          <div class="section">
+            <label>Frame Speed (ms)</label>
+            <input id="speedInput" type="number" min="10" max="200" step="5" value="60" />
+          </div>
+
+          <button id="applyTimingBtn" type="button">Apply Timing</button>
+
           <h3 class="panel-title" style="margin-top: 18px;">How to Animate</h3>
           <div class="guide">
             <div class="guide-title">Step by step:</div>
@@ -463,7 +475,7 @@
             </div>
 
             <div class="timeline-row">
-              <label class="timeline-label">Frame: <span id="frameDisplay">0</span> / 60</label>
+              <label class="timeline-label">Frame: <span id="frameDisplay">0</span> / <span id="totalFrameLabel">60</span></label>
               <div class="timeline-bar" id="timelineBar">
                 <div class="timeline-progress" id="timelineProgress"></div>
               </div>
@@ -579,6 +591,35 @@
         }
       };
 
+      function clampFrameCount(value) {
+        const frameValue = Number(value);
+        if (!Number.isFinite(frameValue)) return 60;
+        return Math.min(240, Math.max(12, Math.round(frameValue)));
+      }
+
+      function clampSpeed(value) {
+        const speedValue = Number(value);
+        if (!Number.isFinite(speedValue)) return 60;
+        return Math.min(200, Math.max(10, Math.round(speedValue)));
+      }
+
+      function syncTimingInputs() {
+        document.getElementById('frameCountInput').value = totalFrames;
+        document.getElementById('speedInput').value = animationSpeed;
+        document.getElementById('frameSlider').max = totalFrames;
+        document.getElementById('totalFrameLabel').textContent = totalFrames;
+      }
+
+      function applyTiming() {
+        totalFrames = clampFrameCount(document.getElementById('frameCountInput').value);
+        animationSpeed = clampSpeed(document.getElementById('speedInput').value);
+        currentFrame = Math.min(currentFrame, totalFrames);
+        syncTimingInputs();
+        updateDisplay();
+        renderKeyframes();
+        draw();
+      }
+
       function lerp(a, b, t) {
         return a + (b - a) * t;
       }
@@ -588,6 +629,7 @@
           .map(Number)
           .sort((a, b) => a - b);
 
+        const maxFrame = Math.max(...frames, totalFrames);
         let before = frames[0];
         let after = frames[frames.length - 1];
 
@@ -600,7 +642,7 @@
         }
 
         if (before === after) {
-          return object.keyframes[before];
+          return object.keyframes[before] || { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 };
         }
 
         const t = (frame - before) / (after - before);
@@ -809,6 +851,11 @@
         button.addEventListener('click', () => applyPreset(button.dataset.preset));
       });
 
+      document.getElementById('applyTimingBtn').addEventListener('click', () => {
+        applyTiming();
+      });
+
+      syncTimingInputs();
       renderKeyframes();
       updateDisplay();
       draw();
