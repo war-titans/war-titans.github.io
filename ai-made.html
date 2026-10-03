@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Animation Studio</title>
+    <title>Animation Studio & Games</title>
     <style>
       :root {
         --bg: #0a0e1a;
@@ -37,12 +37,92 @@
         display: flex;
       }
 
-      .studio {
+      .home-menu {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, var(--bg), var(--bg-2));
+        z-index: 600;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .home-menu.active {
+        display: flex;
+      }
+
+      .home-content {
+        text-align: center;
+      }
+
+      .home-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, var(--purple), var(--cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .home-subtitle {
+        font-size: 1.2rem;
+        color: var(--muted);
+        margin-bottom: 40px;
+      }
+
+      .home-grid {
         display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 25px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .home-btn {
+        padding: 40px 25px;
+        border: 2px solid var(--purple);
+        border-radius: 12px;
+        background: rgba(139, 92, 246, 0.1);
+        color: var(--text);
+        font-weight: 700;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        margin: 0;
+      }
+
+      .home-btn:hover {
+        transform: scale(1.08);
+        background: rgba(139, 92, 246, 0.2);
+        box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3);
+        border-color: var(--cyan);
+      }
+
+      .home-icon {
+        font-size: 3rem;
+      }
+
+      .studio {
+        display: none;
         grid-template-rows: 52px minmax(0, 1fr) auto;
         width: 100vw;
         height: 100vh;
         background: var(--panel);
+      }
+
+      .studio.active {
+        display: grid;
       }
 
       .topbar {
@@ -52,6 +132,29 @@
         padding: 0 16px;
         background: rgba(15, 23, 42, 0.9);
         border-bottom: 1px solid var(--line);
+      }
+
+      .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .topbar-home-btn {
+        padding: 6px 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(34, 211, 238, 0.1);
+        color: var(--cyan);
+        font-weight: 600;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: 0.15s ease;
+      }
+
+      .topbar-home-btn:hover {
+        background: rgba(34, 211, 238, 0.2);
+        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2);
       }
 
       .brand {
@@ -157,10 +260,21 @@
         display: flex;
       }
 
+      .game-header {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
       .game-content {
         text-align: center;
         padding: 20px;
         max-width: 90vw;
+        margin-top: 60px;
       }
 
       .game-title {
@@ -194,7 +308,7 @@
         margin-bottom: 20px;
       }
 
-      .back-btn {
+      .back-btn, .home-game-btn {
         padding: 12px 24px;
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -207,9 +321,25 @@
         margin-top: 20px;
       }
 
-      .back-btn:hover {
+      .home-game-btn {
+        background: rgba(34, 211, 238, 0.12);
+        border-color: rgba(34, 211, 238, 0.3);
+        color: var(--cyan);
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        margin-top: 0;
+      }
+
+      .back-btn:hover, .home-game-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 16px rgba(139, 92, 246, 0.2);
+      }
+
+      .game-button-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
       }
 
       .snake-grid {
@@ -617,28 +747,62 @@
     </style>
   </head>
   <body>
+    <!-- HOME MENU -->
+    <div class="home-menu active" id="homeMenu">
+      <div class="home-content">
+        <h1 class="home-title">✨ Creative Studio</h1>
+        <p class="home-subtitle">Choose what you want to do</p>
+        <div class="home-grid">
+          <button class="home-btn" id="toStudioBtn">
+            <div class="home-icon">🎨</div>
+            <div>Animation Studio</div>
+          </button>
+          <button class="home-btn" id="toGamesBtn">
+            <div class="home-icon">🎮</div>
+            <div>Play Games</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAMES MENU -->
     <div class="menu-overlay" id="menuOverlay">
       <div class="menu-content">
         <h1 class="menu-title">🎮 Play Games</h1>
         <div class="menu-grid" id="menuGrid"></div>
-        <button class="back-btn" id="menuBackBtn">← Back to Studio</button>
+        <div class="game-button-group">
+          <button class="back-btn" id="menuBackBtn">← Back</button>
+          <button class="back-btn" id="menuHomeBtn" style="background: rgba(34, 211, 238, 0.12); border-color: rgba(34, 211, 238, 0.3); color: var(--cyan);">🏠 Home</button>
+        </div>
       </div>
     </div>
 
+    <!-- GAME CONTAINER -->
     <div class="game-container" id="gameContainer">
+      <div class="game-header">
+        <div></div>
+        <button class="home-game-btn" id="gameHomeBtn">🏠 Home</button>
+      </div>
       <div class="game-content">
         <h2 class="game-title" id="gameTitle">Game</h2>
         <div class="game-score" id="gameScore">Score: 0</div>
         <div class="game-area" id="gameArea"></div>
-        <button class="back-btn" id="gameBackBtn">← Back to Studio</button>
+        <div class="game-button-group">
+          <button class="back-btn" id="gameBackBtn">← Back</button>
+          <button class="back-btn" id="gameHomeBtn2" style="background: rgba(34, 211, 238, 0.12); border-color: rgba(34, 211, 238, 0.3); color: var(--cyan);">🏠 Home</button>
+        </div>
       </div>
     </div>
 
-    <div class="studio">
+    <!-- ANIMATION STUDIO -->
+    <div class="studio" id="studio">
       <header class="topbar">
-        <div class="brand">
-          <div class="brand-icon">▶</div>
-          <span>Animation Studio</span>
+        <div class="topbar-left">
+          <button class="topbar-home-btn" id="studioHomeBtn">🏠 HOME</button>
+          <div class="brand">
+            <div class="brand-icon">▶</div>
+            <span>Animation Studio</span>
+          </div>
         </div>
         <div class="topbar-right">
           <span class="status-dot"></span>
@@ -696,7 +860,6 @@
           </div>
 
           <button class="secondary" id="clearAnimBtn" type="button">Clear All</button>
-          <button class="tertiary" id="openGamesBtn" type="button">🎮 Play Games</button>
         </aside>
 
         <div class="canvas-area">
@@ -767,6 +930,46 @@
     </div>
 
     <script>
+      // Navigation Functions
+      function showHomeMenu() {
+        document.getElementById('homeMenu').classList.add('active');
+        document.getElementById('studio').classList.remove('active');
+        document.getElementById('menuOverlay').classList.remove('active');
+        document.getElementById('gameContainer').classList.remove('active');
+        if (gameLoop) clearInterval(gameLoop);
+        gameRunning = false;
+        isPlaying = false;
+      }
+
+      function showStudio() {
+        document.getElementById('homeMenu').classList.remove('active');
+        document.getElementById('studio').classList.add('active');
+        document.getElementById('menuOverlay').classList.remove('active');
+        document.getElementById('gameContainer').classList.remove('active');
+        resizeCanvas();
+      }
+
+      function showGamesMenu() {
+        document.getElementById('homeMenu').classList.remove('active');
+        document.getElementById('studio').classList.remove('active');
+        document.getElementById('menuOverlay').classList.add('active');
+        document.getElementById('gameContainer').classList.remove('active');
+      }
+
+      // Navigation Event Listeners
+      document.getElementById('toStudioBtn').addEventListener('click', showStudio);
+      document.getElementById('toGamesBtn').addEventListener('click', showGamesMenu);
+      document.getElementById('studioHomeBtn').addEventListener('click', showHomeMenu);
+      document.getElementById('menuBackBtn').addEventListener('click', () => {
+        document.getElementById('homeMenu').classList.add('active');
+        document.getElementById('menuOverlay').classList.remove('active');
+      });
+      document.getElementById('menuHomeBtn').addEventListener('click', showHomeMenu);
+      document.getElementById('gameBackBtn').addEventListener('click', showGamesMenu);
+      document.getElementById('gameHomeBtn').addEventListener('click', showHomeMenu);
+      document.getElementById('gameHomeBtn2').addEventListener('click', showHomeMenu);
+
+      // Canvas Setup
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
 
@@ -1014,35 +1217,12 @@
       }
 
       // Game Logic
-      function showMenuOverlay() {
-        document.getElementById('menuOverlay').classList.add('active');
-        const grid = document.getElementById('menuGrid');
-        grid.innerHTML = '';
-        games.forEach(game => {
-          const btn = document.createElement('button');
-          btn.className = 'menu-btn';
-          btn.innerHTML = `<div class="menu-icon">${game.icon}</div><div>${game.name}</div>`;
-          btn.onclick = () => startGame(game.id);
-          grid.appendChild(btn);
-        });
-      }
-
-      function hideMenuOverlay() {
-        document.getElementById('menuOverlay').classList.remove('active');
-      }
-
       function showGameContainer() {
         document.getElementById('gameContainer').classList.add('active');
       }
 
-      function hideGameContainer() {
-        document.getElementById('gameContainer').classList.remove('active');
-        if (gameLoop) clearInterval(gameLoop);
-        gameRunning = false;
-      }
-
       function startGame(gameId) {
-        hideMenuOverlay();
+        document.getElementById('menuOverlay').classList.remove('active');
         currentGame = gameId;
         showGameContainer();
         resetGame(gameId);
@@ -1217,24 +1397,17 @@
         }, gameId === 'snake' ? 200 : 50);
       }
 
-      document.getElementById('openGamesBtn').addEventListener('click', showMenuOverlay);
-      document.getElementById('menuBackBtn').addEventListener('click', () => {
-        hideMenuOverlay();
-        if (gameLoop) clearInterval(gameLoop);
-      });
-      document.getElementById('gameBackBtn').addEventListener('click', hideGameContainer);
-
-      document.addEventListener('keydown', (e) => {
-        if (currentGame === 'snake') {
-          if (e.key === 'ArrowUp' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, -1];
-          if (e.key === 'ArrowDown' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, 1];
-          if (e.key === 'ArrowLeft' && gameState.snake.direction[0] === 0) gameState.snake.direction = [-1, 0];
-          if (e.key === 'ArrowRight' && gameState.snake.direction[0] === 0) gameState.snake.direction = [1, 0];
-        } else if (currentGame === 'flappy') {
-          if (e.key === ' ' || e.key === 'Enter') gameState.flappy.vy = -10;
-        }
+      // Games Menu Setup
+      const grid = document.getElementById('menuGrid');
+      games.forEach(game => {
+        const btn = document.createElement('button');
+        btn.className = 'menu-btn';
+        btn.innerHTML = `<div class="menu-icon">${game.icon}</div><div>${game.name}</div>`;
+        btn.onclick = () => startGame(game.id);
+        grid.appendChild(btn);
       });
 
+      // Studio Event Listeners
       document.getElementById('playBtn').addEventListener('click', (e) => {
         e.preventDefault();
         isPlaying = true;
@@ -1329,6 +1502,18 @@
 
       document.getElementById('applyTimingBtn').addEventListener('click', () => {
         applyTiming();
+      });
+
+      // Game Controls
+      document.addEventListener('keydown', (e) => {
+        if (currentGame === 'snake') {
+          if (e.key === 'ArrowUp' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, -1];
+          if (e.key === 'ArrowDown' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, 1];
+          if (e.key === 'ArrowLeft' && gameState.snake.direction[0] === 0) gameState.snake.direction = [-1, 0];
+          if (e.key === 'ArrowRight' && gameState.snake.direction[0] === 0) gameState.snake.direction = [1, 0];
+        } else if (currentGame === 'flappy') {
+          if (e.key === ' ' || e.key === 'Enter') gameState.flappy.vy = -10;
+        }
       });
 
       syncTimingInputs();
