@@ -3,6 +3,7 @@
   background-color: black;
   font-family: 'Courier New', Courier, monospace;
 }
+/*Everything else is the elements they apply to.*/
 p {
   color: teal;
 }
@@ -33,3 +34,6 @@ li {
 ol {
   color: teal;
 }  
+button {
+ color: red
+}
