@@ -281,6 +281,7 @@
         align-items: center;
         justify-content: center;
         position: relative;
+        cursor: pointer;
       }
 
       .game-score {
@@ -369,12 +370,12 @@
 
       .flappy-bird {
         position: absolute;
-        left: 40px;
-        width: 42px;
-        height: 42px;
+        left: 20px;
+        width: 24px;
+        height: 24px;
         background: var(--cyan);
         border-radius: 50%;
-        box-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
+        box-shadow: 0 0 15px rgba(34, 211, 238, 0.8);
       }
 
       .pipe {
@@ -1247,7 +1248,7 @@
         const bird = document.createElement('div');
         bird.className = 'flappy-bird';
         bird.style.top = `${gameState.flappy.y}px`;
-        bird.style.left = '40px';
+        bird.style.left = '20px';
         gameArea.appendChild(bird);
 
         gameState.flappy.pipes.forEach(pipe => {
@@ -1283,10 +1284,10 @@
 
         gameState.flappy.pipes = gameState.flappy.pipes.filter(pipe => pipe.x > -60);
 
-        const birdX = 40;
+        const birdX = 20;
         const birdY = gameState.flappy.y;
-        const birdW = 42;
-        const birdH = 42;
+        const birdW = 24;
+        const birdH = 24;
 
         gameState.flappy.pipes.forEach(pipe => {
           pipe.x -= 4;
@@ -1449,14 +1450,20 @@
 
       document.getElementById('applyTimingBtn').addEventListener('click', applyTiming);
 
+      // Game controls: WASD for snake, click for flappy
       document.addEventListener('keydown', (e) => {
         if (currentGame === 'snake') {
-          if (e.key === 'ArrowUp' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, -1];
-          if (e.key === 'ArrowDown' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, 1];
-          if (e.key === 'ArrowLeft' && gameState.snake.direction[0] === 0) gameState.snake.direction = [-1, 0];
-          if (e.key === 'ArrowRight' && gameState.snake.direction[0] === 0) gameState.snake.direction = [1, 0];
-        } else if (currentGame === 'flappy') {
-          if (e.key === ' ' || e.key === 'Enter') gameState.flappy.vy = -10;
+          if (e.key.toLowerCase() === 'w' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, -1];
+          if (e.key.toLowerCase() === 's' && gameState.snake.direction[1] === 0) gameState.snake.direction = [0, 1];
+          if (e.key.toLowerCase() === 'a' && gameState.snake.direction[0] === 0) gameState.snake.direction = [-1, 0];
+          if (e.key.toLowerCase() === 'd' && gameState.snake.direction[0] === 0) gameState.snake.direction = [1, 0];
+        }
+      });
+
+      // Click to fly for Flappy
+      document.getElementById('gameArea').addEventListener('click', () => {
+        if (currentGame === 'flappy') {
+          gameState.flappy.vy = -10;
         }
       });
 
