@@ -37,7 +37,6 @@
         background: var(--line);
       }
 
-      /* ===== TOP BAR ===== */
       .topbar {
         display: flex;
         align-items: center;
@@ -84,7 +83,6 @@
         box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
       }
 
-      /* ===== MAIN WORKSPACE ===== */
       .workspace {
         display: grid;
         grid-template-columns: 280px 1fr 240px;
@@ -123,9 +121,9 @@
         border-bottom: none;
       }
 
-      /* ===== SIDEBAR CONTROLS ===== */
       input[type="text"],
       input[type="range"],
+      input[type="color"],
       select {
         width: 100%;
         padding: 8px 10px;
@@ -179,7 +177,6 @@
         border-color: rgba(52, 211, 153, 0.2);
       }
 
-      /* ===== CANVAS AREA ===== */
       .canvas-area {
         display: grid;
         grid-template-rows: 1fr auto;
@@ -199,7 +196,6 @@
         height: 100%;
       }
 
-      /* ===== TIMELINE ===== */
       .timeline {
         background: var(--panel);
         border-top: 1px solid var(--line);
@@ -260,7 +256,6 @@
         box-shadow: 0 2px 8px var(--shadow);
       }
 
-      /* ===== KEYFRAME STRIP ===== */
       .keyframe-strip {
         display: flex;
         gap: 6px;
@@ -280,6 +275,7 @@
         font-size: 0.65rem;
         display: grid;
         place-items: center;
+        padding: 0;
       }
 
       .keyframe:hover {
@@ -292,7 +288,6 @@
         box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
       }
 
-      /* ===== INSPECTOR ===== */
       .property-row {
         margin-bottom: 14px;
       }
@@ -320,7 +315,6 @@
         margin-bottom: 2px;
       }
 
-      /* ===== GUIDE PANEL ===== */
       .guide {
         background: rgba(34, 211, 238, 0.06);
         border: 1px solid rgba(34, 211, 238, 0.15);
@@ -368,7 +362,6 @@
   </head>
   <body>
     <div class="studio">
-      <!-- TOP BAR -->
       <header class="topbar">
         <div class="brand">
           <div class="brand-icon">▶</div>
@@ -380,57 +373,44 @@
         </div>
       </header>
 
-      <!-- MAIN WORKSPACE -->
       <div class="workspace">
-        <!-- LEFT SIDEBAR -->
         <aside class="sidebar">
-          <h3 class="panel-title">Objects</h3>
+          <h3 class="panel-title">Shape</h3>
 
-          <div class="section">
-            <label>Name</label>
-            <input type="text" id="objectName" value="Square" />
-            <button class="secondary" id="addObjectBtn">+ New Object</button>
-          </div>
-
-          <h3 class="panel-title" style="margin-top: 18px;">Shape</h3>
           <div class="section">
             <label>Type</label>
             <select id="shapeType">
-              <option>Square</option>
-              <option>Circle</option>
-              <option>Triangle</option>
-              <option>Star</option>
+              <option value="square">Square</option>
+              <option value="circle">Circle</option>
+              <option value="triangle">Triangle</option>
             </select>
           </div>
 
-          <h3 class="panel-title" style="margin-top: 18px;">Color</h3>
           <div class="section">
-            <label>Fill</label>
-            <input type="text" id="colorInput" value="#8b5cf6" />
+            <label>Color</label>
+            <input type="color" id="colorInput" value="#8b5cf6" />
           </div>
 
-          <h3 class="panel-title" style="margin-top: 18px;">Animation Basics</h3>
+          <h3 class="panel-title" style="margin-top: 18px;">How to Animate</h3>
           <div class="guide">
-            <div class="guide-title">How to animate:</div>
+            <div class="guide-title">Step by step:</div>
             <div>
-              1. Set a keyframe at start (frame 0)<br/>
-              2. Move slider to frame 30<br/>
-              3. Change position/size/color<br/>
-              4. Set keyframe at frame 30<br/>
+              1. Move frame slider<br/>
+              2. Adjust position/size<br/>
+              3. Click "Set Keyframe"<br/>
+              4. Move to next frame<br/>
               5. Press PLAY
             </div>
           </div>
 
-          <button id="clearAnimBtn">Clear Animation</button>
+          <button class="secondary" id="clearAnimBtn">Clear All</button>
         </aside>
 
-        <!-- CENTER CANVAS -->
         <div class="canvas-area">
           <div class="canvas-viewport">
             <canvas id="canvas"></canvas>
           </div>
 
-          <!-- TIMELINE -->
           <div class="timeline">
             <div class="timeline-header">
               <h3 class="panel-title">Timeline</h3>
@@ -440,61 +420,50 @@
               </div>
             </div>
 
+            <div style="margin-bottom: 10px; display: flex; gap: 8px; align-items: center;">
+              <label style="margin: 0; flex: 1; font-weight: 600;">Frame: <span id="frameDisplay">0</span> / 60</label>
+              <input type="range" id="frameSlider" min="0" max="60" value="0" style="margin: 0; flex: 2;" />
+            </div>
+
             <div class="timeline-bar" id="timelineBar">
-              <div class="timeline-progress" id="timelineProgress"></div>
+              <div class="timeline-progress" id="timelineProgress" style="width: 0%;"></div>
             </div>
 
             <div class="keyframe-strip" id="keyframeStrip"></div>
-
-            <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">
-              <label style="margin: 0; flex: 1;">Frame: <strong id="frameDisplay">0</strong> / 60</label>
-              <input type="range" id="frameSlider" min="0" max="60" value="0" style="margin: 0; flex: 2;" />
-            </div>
           </div>
         </div>
 
-        <!-- RIGHT INSPECTOR -->
         <aside class="inspector">
           <h3 class="panel-title">Properties</h3>
 
           <div class="section">
             <label>Position X</label>
-            <div class="value-display">
-              <input type="range" id="posX" min="0" max="800" value="400" />
-              <div class="value-box"><strong id="posXValue">400</strong>px</div>
-            </div>
+            <input type="range" id="posX" min="0" max="800" value="400" />
+            <div class="value-box"><strong id="posXValue">400</strong>px</div>
           </div>
 
           <div class="section">
             <label>Position Y</label>
-            <div class="value-display">
-              <input type="range" id="posY" min="0" max="400" value="200" />
-              <div class="value-box"><strong id="posYValue">200</strong>px</div>
-            </div>
+            <input type="range" id="posY" min="0" max="400" value="200" />
+            <div class="value-box"><strong id="posYValue">200</strong>px</div>
           </div>
 
           <div class="section">
             <label>Size</label>
-            <div class="value-display">
-              <input type="range" id="size" min="10" max="200" value="60" />
-              <div class="value-box"><strong id="sizeValue">60</strong>px</div>
-            </div>
+            <input type="range" id="size" min="10" max="200" value="60" />
+            <div class="value-box"><strong id="sizeValue">60</strong>px</div>
           </div>
 
           <div class="section">
             <label>Rotation</label>
-            <div class="value-display">
-              <input type="range" id="rotation" min="0" max="360" value="0" />
-              <div class="value-box"><strong id="rotationValue">0</strong>°</div>
-            </div>
+            <input type="range" id="rotation" min="0" max="360" value="0" />
+            <div class="value-box"><strong id="rotationValue">0</strong>°</div>
           </div>
 
           <div class="section">
             <label>Opacity</label>
-            <div class="value-display">
-              <input type="range" id="opacity" min="0" max="100" value="100" />
-              <div class="value-box"><strong id="opacityValue">100</strong>%</div>
-            </div>
+            <input type="range" id="opacity" min="0" max="100" value="100" />
+            <div class="value-box"><strong id="opacityValue">100</strong>%</div>
           </div>
 
           <button class="secondary" id="setKeyframeBtn">📌 Set Keyframe</button>
@@ -505,41 +474,42 @@
     <script>
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
-      
-      // Setup canvas size
+
+      // Setup canvas
       function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
       }
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
 
-      // Animation state
+      // State
       let isPlaying = false;
       let currentFrame = 0;
       let totalFrames = 60;
-      let animationSpeed = 1000 / 30; // 30 FPS
+      let animationSpeed = 50;
 
-      // Object data
       let object = {
-        name: 'Square',
-        type: 'Square',
+        shapeType: 'square',
         color: '#8b5cf6',
         keyframes: {
           0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 },
-          30: { x: 200, y: 150, size: 80, rotation: 180, opacity: 100 },
+          30: { x: 200, y: 150, size: 100, rotation: 180, opacity: 100 },
           60: { x: 400, y: 200, size: 60, rotation: 360, opacity: 100 }
         }
       };
 
-      // Interpolation
+      // Lerp
       function lerp(a, b, t) {
         return a + (b - a) * t;
       }
 
-      function getInterpolatedValue(keyframes, frame) {
-        const frames = Object.keys(keyframes).map(Number).sort((a, b) => a - b);
-        
+      function getState(frame) {
+        const frames = Object.keys(object.keyframes)
+          .map(Number)
+          .sort((a, b) => a - b);
+
         let before = frames[0];
         let after = frames[frames.length - 1];
 
@@ -552,12 +522,12 @@
         }
 
         if (before === after) {
-          return keyframes[before];
+          return object.keyframes[before];
         }
 
         const t = (frame - before) / (after - before);
-        const kf1 = keyframes[before];
-        const kf2 = keyframes[after];
+        const kf1 = object.keyframes[before];
+        const kf2 = object.keyframes[after];
 
         return {
           x: lerp(kf1.x, kf2.x, t),
@@ -568,120 +538,156 @@
         };
       }
 
-      // Draw function
-      function drawFrame() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const state = getInterpolatedValue(object.keyframes, currentFrame);
-
+      function drawShape(x, y, size, rotation, opacity, type, color) {
         ctx.save();
-        ctx.globalAlpha = state.opacity / 100;
-        ctx.translate(state.x, state.y);
-        ctx.rotate((state.rotation * Math.PI) / 180);
-        ctx.fillStyle = object.color;
+        ctx.globalAlpha = opacity / 100;
+        ctx.translate(x, y);
+        ctx.rotate((rotation * Math.PI) / 180);
 
-        if (object.type === 'Square') {
-          ctx.fillRect(-state.size / 2, -state.size / 2, state.size, state.size);
-        } else if (object.type === 'Circle') {
+        if (type === 'square') {
+          ctx.fillStyle = color;
+          ctx.fillRect(-size / 2, -size / 2, size, size);
+        } else if (type === 'circle') {
+          ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.arc(0, 0, state.size / 2, 0, Math.PI * 2);
+          ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
           ctx.fill();
-        } else if (object.type === 'Triangle') {
+        } else if (type === 'triangle') {
+          ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.moveTo(0, -state.size / 2);
-          ctx.lineTo(state.size / 2, state.size / 2);
-          ctx.lineTo(-state.size / 2, state.size / 2);
+          ctx.moveTo(0, -size / 2);
+          ctx.lineTo(size / 2, size / 2);
+          ctx.lineTo(-size / 2, size / 2);
           ctx.closePath();
           ctx.fill();
-        } else if (object.type === 'Star') {
-          drawStar(0, 0, state.size / 2);
         }
 
         ctx.restore();
       }
 
-      function drawStar(cx, cy, r) {
-        let points = 5;
-        let angle = (Math.PI * 2) / points;
-        ctx.beginPath();
-        for (let i = 0; i < points * 2; i++) {
-          const radius = i % 2 === 0 ? r : r * 0.5;
-          const x = cx + Math.cos(i * angle - Math.PI / 2) * radius;
-          const y = cy + Math.sin(i * angle - Math.PI / 2) * radius;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.fill();
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const state = getState(currentFrame);
+        drawShape(
+          state.x,
+          state.y,
+          state.size,
+          state.rotation,
+          state.opacity,
+          object.shapeType,
+          object.color
+        );
       }
 
-      // Animation loop
-      function animate() {
-        drawFrame();
-        
-        if (isPlaying) {
-          currentFrame += 1;
-          if (currentFrame > totalFrames) {
-            currentFrame = 0;
-          }
-          updateUI();
-          setTimeout(animate, animationSpeed);
-        } else {
-          drawFrame();
-        }
-      }
-
-      // Update UI
-      function updateUI() {
+      function updateDisplay() {
         document.getElementById('frameDisplay').textContent = currentFrame;
         document.getElementById('frameSlider').value = currentFrame;
-        document.getElementById('timelineProgress').style.width = (currentFrame / totalFrames) * 100 + '%';
+        document.getElementById('timelineProgress').style.width =
+          (currentFrame / totalFrames) * 100 + '%';
 
-        const state = getInterpolatedValue(object.keyframes, currentFrame);
+        const state = getState(currentFrame);
         document.getElementById('posXValue').textContent = Math.round(state.x);
         document.getElementById('posYValue').textContent = Math.round(state.y);
         document.getElementById('sizeValue').textContent = Math.round(state.size);
         document.getElementById('rotationValue').textContent = Math.round(state.rotation);
         document.getElementById('opacityValue').textContent = Math.round(state.opacity);
+
+        document.getElementById('posX').value = Math.round(state.x);
+        document.getElementById('posY').value = Math.round(state.y);
+        document.getElementById('size').value = Math.round(state.size);
+        document.getElementById('rotation').value = Math.round(state.rotation);
+        document.getElementById('opacity').value = Math.round(state.opacity);
       }
 
       function renderKeyframes() {
         const strip = document.getElementById('keyframeStrip');
         strip.innerHTML = '';
-        
+
         for (let i = 0; i <= totalFrames; i += 5) {
-          const kf = document.createElement('button');
-          kf.className = 'keyframe' + (object.keyframes[i] ? ' active' : '');
-          kf.textContent = i;
-          kf.onclick = () => {
+          const btn = document.createElement('button');
+          btn.className = 'keyframe' + (object.keyframes[i] ? ' active' : '');
+          btn.textContent = i;
+          btn.onclick = (e) => {
+            e.preventDefault();
             currentFrame = i;
-            updateUI();
-            drawFrame();
+            updateDisplay();
+            draw();
           };
-          strip.appendChild(kf);
+          strip.appendChild(btn);
         }
       }
 
-      // Event listeners
-      document.getElementById('playBtn').addEventListener('click', () => {
-        isPlaying = !isPlaying;
-        animate();
+      function animationLoop() {
+        draw();
+
+        if (isPlaying) {
+          currentFrame += 1;
+          if (currentFrame > totalFrames) {
+            currentFrame = 0;
+          }
+          updateDisplay();
+          setTimeout(animationLoop, animationSpeed);
+        }
+      }
+
+      // Event handlers
+      document.getElementById('playBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        isPlaying = true;
+        animationLoop();
       });
 
-      document.getElementById('stopBtn').addEventListener('click', () => {
+      document.getElementById('stopBtn').addEventListener('click', (e) => {
+        e.preventDefault();
         isPlaying = false;
         currentFrame = 0;
-        updateUI();
-        drawFrame();
+        updateDisplay();
+        draw();
       });
 
       document.getElementById('frameSlider').addEventListener('input', (e) => {
         currentFrame = Number(e.target.value);
-        updateUI();
-        drawFrame();
+        updateDisplay();
+        draw();
       });
 
-      document.getElementById('setKeyframeBtn').addEventListener('click', () => {
+      document.getElementById('posX').addEventListener('input', (e) => {
+        document.getElementById('posXValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('posY').addEventListener('input', (e) => {
+        document.getElementById('posYValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('size').addEventListener('input', (e) => {
+        document.getElementById('sizeValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('rotation').addEventListener('input', (e) => {
+        document.getElementById('rotationValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('opacity').addEventListener('input', (e) => {
+        document.getElementById('opacityValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('shapeType').addEventListener('change', (e) => {
+        object.shapeType = e.target.value;
+        draw();
+      });
+
+      document.getElementById('colorInput').addEventListener('change', (e) => {
+        object.color = e.target.value;
+        draw();
+      });
+
+      document.getElementById('setKeyframeBtn').addEventListener('click', (e) => {
+        e.preventDefault();
         object.keyframes[currentFrame] = {
           x: Number(document.getElementById('posX').value),
           y: Number(document.getElementById('posY').value),
@@ -690,65 +696,34 @@
           opacity: Number(document.getElementById('opacity').value)
         };
         renderKeyframes();
-        drawFrame();
+        draw();
       });
 
-      document.getElementById('shapeType').addEventListener('change', (e) => {
-        object.type = e.target.value;
-        drawFrame();
-      });
-
-      document.getElementById('colorInput').addEventListener('change', (e) => {
-        object.color = e.target.value;
-        drawFrame();
-      });
-
-      document.getElementById('posX').addEventListener('input', (e) => {
-        document.getElementById('posXValue').textContent = e.target.value;
-        drawFrame();
-      });
-
-      document.getElementById('posY').addEventListener('input', (e) => {
-        document.getElementById('posYValue').textContent = e.target.value;
-        drawFrame();
-      });
-
-      document.getElementById('size').addEventListener('input', (e) => {
-        document.getElementById('sizeValue').textContent = e.target.value;
-        drawFrame();
-      });
-
-      document.getElementById('rotation').addEventListener('input', (e) => {
-        document.getElementById('rotationValue').textContent = e.target.value;
-        drawFrame();
-      });
-
-      document.getElementById('opacity').addEventListener('input', (e) => {
-        document.getElementById('opacityValue').textContent = e.target.value;
-        drawFrame();
-      });
-
-      document.getElementById('clearAnimBtn').addEventListener('click', () => {
+      document.getElementById('clearAnimBtn').addEventListener('click', (e) => {
+        e.preventDefault();
         object.keyframes = {
           0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 }
         };
+        currentFrame = 0;
+        isPlaying = false;
         renderKeyframes();
-        drawFrame();
+        updateDisplay();
+        draw();
       });
 
       document.getElementById('timelineBar').addEventListener('click', (e) => {
-        const rect = e.target.getBoundingClientRect();
+        const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
-        const percent = x / rect.width;
+        const percent = Math.max(0, Math.min(1, x / rect.width));
         currentFrame = Math.round(percent * totalFrames);
-        updateUI();
-        drawFrame();
+        updateDisplay();
+        draw();
       });
 
-      // Initial render
+      // Init
       renderKeyframes();
-      updateUI();
-      drawFrame();
+      updateDisplay();
+      draw();
     </script>
   </body>
 </html>
