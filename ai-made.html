@@ -23,18 +23,27 @@
       html, body {
         margin: 0;
         padding: 0;
+        width: 100%;
         height: 100%;
+        min-height: 100vh;
         font-family: Inter, "Segoe UI", monospace;
         background: linear-gradient(135deg, var(--bg), var(--bg-2));
         color: var(--text);
+        overflow: hidden;
+      }
+
+      body {
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
       }
 
       .studio {
         display: grid;
-        grid-template-rows: 50px 1fr 120px;
+        grid-template-rows: 52px minmax(0, 1fr) 122px;
+        width: 100vw;
         height: 100vh;
-        gap: 1px;
-        background: var(--line);
+        background: var(--panel);
       }
 
       .topbar {
@@ -42,7 +51,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 0 16px;
-        background: var(--panel);
+        background: rgba(15, 23, 42, 0.9);
         border-bottom: 1px solid var(--line);
       }
 
@@ -54,6 +63,7 @@
         font-size: 0.85rem;
         letter-spacing: 0.1em;
         text-transform: uppercase;
+        white-space: nowrap;
       }
 
       .brand-icon {
@@ -70,7 +80,7 @@
       .topbar-right {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
         color: var(--muted);
         font-size: 0.8rem;
       }
@@ -85,26 +95,50 @@
 
       .workspace {
         display: grid;
-        grid-template-columns: 280px 1fr 240px;
+        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(200px, 240px);
         gap: 1px;
+        min-height: 0;
         background: var(--line);
-        overflow: hidden;
       }
 
       .sidebar, .inspector {
-        background: var(--panel);
+        background: rgba(15, 23, 42, 0.82);
         overflow-y: auto;
         padding: 16px;
-        border-right: 1px solid var(--line);
+        min-height: 0;
       }
 
       .inspector {
-        border-right: none;
+        border-left: 1px solid var(--line);
+      }
+
+      .canvas-area {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+        min-height: 0;
+        background: rgba(17, 24, 39, 0.7);
+      }
+
+      .canvas-viewport {
+        position: relative;
+        min-height: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(20, 28, 44, 0.8));
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
       }
 
       .panel-title {
-        font-size: 0.75rem;
-        letter-spacing: 0.1em;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
         color: var(--muted);
         margin: 0 0 12px 0;
@@ -121,7 +155,17 @@
         border-bottom: none;
       }
 
+      label {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
       input[type="text"],
+      input[type="number"],
       input[type="range"],
       input[type="color"],
       select {
@@ -140,15 +184,6 @@
         accent-color: var(--purple);
       }
 
-      label {
-        display: block;
-        font-size: 0.75rem;
-        color: var(--muted);
-        margin-bottom: 6px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
       button {
         padding: 10px 12px;
         border: 1px solid var(--line);
@@ -156,7 +191,7 @@
         background: rgba(139, 92, 246, 0.12);
         color: var(--text);
         font-weight: 600;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         cursor: pointer;
         transition: 0.15s ease;
         width: 100%;
@@ -177,31 +212,28 @@
         border-color: rgba(52, 211, 153, 0.2);
       }
 
-      .canvas-area {
-        display: grid;
-        grid-template-rows: 1fr auto;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.6), rgba(11, 16, 26, 0.6));
-        position: relative;
+      .guide {
+        background: rgba(34, 211, 238, 0.06);
+        border: 1px solid rgba(34, 211, 238, 0.15);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: #bae6fd;
+        margin-bottom: 12px;
       }
 
-      .canvas-viewport {
-        position: relative;
-        overflow: hidden;
-        background: linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(20, 28, 44, 0.8));
-      }
-
-      canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
+      .guide-title {
+        font-weight: 700;
+        color: var(--cyan);
+        margin-bottom: 6px;
       }
 
       .timeline {
-        background: var(--panel);
+        background: rgba(15, 23, 42, 0.9);
         border-top: 1px solid var(--line);
         padding: 12px;
-        max-height: 120px;
-        overflow-y: auto;
+        min-height: 0;
       }
 
       .timeline-header {
@@ -227,75 +259,61 @@
         font-size: 0.7rem;
       }
 
+      .timeline-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .timeline-label {
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin: 0;
+        white-space: nowrap;
+      }
+
       .timeline-bar {
-        width: 100%;
-        height: 3px;
-        background: rgba(148, 163, 184, 0.1);
+        flex: 1;
+        height: 4px;
+        background: rgba(148, 163, 184, 0.12);
         border-radius: 2px;
         position: relative;
         cursor: pointer;
-        margin-top: 8px;
       }
 
       .timeline-progress {
         height: 100%;
         background: linear-gradient(90deg, var(--purple), var(--cyan));
         border-radius: 2px;
-        position: relative;
-      }
-
-      .timeline-progress::after {
-        content: "";
-        position: absolute;
-        width: 10px;
-        height: 10px;
-        background: white;
-        border-radius: 50%;
-        right: -5px;
-        top: -3.5px;
-        box-shadow: 0 2px 8px var(--shadow);
+        width: 0%;
       }
 
       .keyframe-strip {
         display: flex;
         gap: 6px;
-        margin-top: 8px;
-        padding: 8px 0;
         flex-wrap: wrap;
+        margin-top: 10px;
       }
 
       .keyframe {
-        width: 24px;
-        height: 24px;
-        background: rgba(139, 92, 246, 0.2);
-        border: 1px solid var(--line);
+        width: 22px;
+        height: 22px;
         border-radius: 4px;
-        cursor: pointer;
-        transition: 0.1s ease;
-        font-size: 0.65rem;
+        border: 1px solid var(--line);
+        background: rgba(139, 92, 246, 0.18);
+        color: var(--text);
+        font-size: 0.6rem;
         display: grid;
         place-items: center;
         padding: 0;
-      }
-
-      .keyframe:hover {
-        background: rgba(139, 92, 246, 0.4);
+        margin: 0;
+        cursor: pointer;
       }
 
       .keyframe.active {
         background: var(--purple);
-        border-color: var(--purple);
-        box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
-      }
-
-      .property-row {
-        margin-bottom: 14px;
-      }
-
-      .value-display {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
+        box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
       }
 
       .value-box {
@@ -306,6 +324,7 @@
         text-align: center;
         font-size: 0.75rem;
         color: var(--muted);
+        margin-top: 6px;
       }
 
       .value-box strong {
@@ -313,33 +332,6 @@
         color: var(--text);
         font-size: 0.9rem;
         margin-bottom: 2px;
-      }
-
-      .guide {
-        background: rgba(34, 211, 238, 0.06);
-        border: 1px solid rgba(34, 211, 238, 0.15);
-        border-radius: 8px;
-        padding: 10px;
-        font-size: 0.75rem;
-        line-height: 1.5;
-        color: #bae6fd;
-        margin-bottom: 12px;
-      }
-
-      .guide-title {
-        font-weight: 700;
-        color: var(--cyan);
-        margin-bottom: 6px;
-      }
-
-      @media (max-width: 1200px) {
-        .workspace {
-          grid-template-columns: 1fr;
-        }
-
-        .sidebar, .inspector {
-          display: none;
-        }
       }
 
       ::-webkit-scrollbar {
@@ -355,8 +347,31 @@
         border-radius: 4px;
       }
 
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(139, 92, 246, 0.5);
+      @media (max-width: 980px) {
+        html, body {
+          overflow: auto;
+        }
+
+        .studio {
+          grid-template-rows: 52px minmax(0, 1fr) auto;
+          height: auto;
+          min-height: 100vh;
+        }
+
+        .workspace {
+          display: block;
+        }
+
+        .sidebar, .inspector {
+          width: 100%;
+          border-left: none;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .canvas-area {
+          min-height: 420px;
+          height: 420px;
+        }
       }
     </style>
   </head>
@@ -397,7 +412,7 @@
             <div>
               1. Move frame slider<br/>
               2. Adjust position/size<br/>
-              3. Click "Set Keyframe"<br/>
+              3. Click “Set Keyframe”<br/>
               4. Move to next frame<br/>
               5. Press PLAY
             </div>
@@ -420,13 +435,15 @@
               </div>
             </div>
 
-            <div style="margin-bottom: 10px; display: flex; gap: 8px; align-items: center;">
-              <label style="margin: 0; flex: 1; font-weight: 600;">Frame: <span id="frameDisplay">0</span> / 60</label>
-              <input type="range" id="frameSlider" min="0" max="60" value="0" style="margin: 0; flex: 2;" />
+            <div class="timeline-row">
+              <label class="timeline-label">Frame: <span id="frameDisplay">0</span> / 60</label>
+              <div class="timeline-bar" id="timelineBar">
+                <div class="timeline-progress" id="timelineProgress"></div>
+              </div>
             </div>
 
-            <div class="timeline-bar" id="timelineBar">
-              <div class="timeline-progress" id="timelineProgress" style="width: 0%;"></div>
+            <div style="margin-top: 8px;">
+              <input type="range" id="frameSlider" min="0" max="60" value="0" />
             </div>
 
             <div class="keyframe-strip" id="keyframeStrip"></div>
@@ -475,16 +492,15 @@
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
 
-      // Setup canvas
       function resizeCanvas() {
         const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+        canvas.width = Math.max(300, rect.width);
+        canvas.height = Math.max(220, rect.height);
       }
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
 
-      // State
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
       let isPlaying = false;
       let currentFrame = 0;
       let totalFrames = 60;
@@ -495,12 +511,11 @@
         color: '#8b5cf6',
         keyframes: {
           0: { x: 400, y: 200, size: 60, rotation: 0, opacity: 100 },
-          30: { x: 200, y: 150, size: 100, rotation: 180, opacity: 100 },
+          30: { x: 220, y: 140, size: 100, rotation: 180, opacity: 100 },
           60: { x: 400, y: 200, size: 60, rotation: 360, opacity: 100 }
         }
       };
 
-      // Lerp
       function lerp(a, b, t) {
         return a + (b - a) * t;
       }
@@ -526,34 +541,32 @@
         }
 
         const t = (frame - before) / (after - before);
-        const kf1 = object.keyframes[before];
-        const kf2 = object.keyframes[after];
+        const k1 = object.keyframes[before];
+        const k2 = object.keyframes[after];
 
         return {
-          x: lerp(kf1.x, kf2.x, t),
-          y: lerp(kf1.y, kf2.y, t),
-          size: lerp(kf1.size, kf2.size, t),
-          rotation: lerp(kf1.rotation, kf2.rotation, t),
-          opacity: lerp(kf1.opacity, kf2.opacity, t)
+          x: lerp(k1.x, k2.x, t),
+          y: lerp(k1.y, k2.y, t),
+          size: lerp(k1.size, k2.size, t),
+          rotation: lerp(k1.rotation, k2.rotation, t),
+          opacity: lerp(k1.opacity, k2.opacity, t)
         };
       }
 
       function drawShape(x, y, size, rotation, opacity, type, color) {
         ctx.save();
-        ctx.globalAlpha = opacity / 100;
         ctx.translate(x, y);
         ctx.rotate((rotation * Math.PI) / 180);
+        ctx.globalAlpha = opacity / 100;
+        ctx.fillStyle = color;
 
         if (type === 'square') {
-          ctx.fillStyle = color;
           ctx.fillRect(-size / 2, -size / 2, size, size);
         } else if (type === 'circle') {
-          ctx.fillStyle = color;
           ctx.beginPath();
           ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
           ctx.fill();
         } else if (type === 'triangle') {
-          ctx.fillStyle = color;
           ctx.beginPath();
           ctx.moveTo(0, -size / 2);
           ctx.lineTo(size / 2, size / 2);
@@ -568,22 +581,13 @@
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const state = getState(currentFrame);
-        drawShape(
-          state.x,
-          state.y,
-          state.size,
-          state.rotation,
-          state.opacity,
-          object.shapeType,
-          object.color
-        );
+        drawShape(state.x, state.y, state.size, state.rotation, state.opacity, object.shapeType, object.color);
       }
 
       function updateDisplay() {
         document.getElementById('frameDisplay').textContent = currentFrame;
         document.getElementById('frameSlider').value = currentFrame;
-        document.getElementById('timelineProgress').style.width =
-          (currentFrame / totalFrames) * 100 + '%';
+        document.getElementById('timelineProgress').style.width = (currentFrame / totalFrames) * 100 + '%';
 
         const state = getState(currentFrame);
         document.getElementById('posXValue').textContent = Math.round(state.x);
@@ -607,8 +611,8 @@
           const btn = document.createElement('button');
           btn.className = 'keyframe' + (object.keyframes[i] ? ' active' : '');
           btn.textContent = i;
-          btn.onclick = (e) => {
-            e.preventDefault();
+          btn.type = 'button';
+          btn.onclick = () => {
             currentFrame = i;
             updateDisplay();
             draw();
@@ -630,7 +634,6 @@
         }
       }
 
-      // Event handlers
       document.getElementById('playBtn').addEventListener('click', (e) => {
         e.preventDefault();
         isPlaying = true;
@@ -651,38 +654,11 @@
         draw();
       });
 
-      document.getElementById('posX').addEventListener('input', (e) => {
-        document.getElementById('posXValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('posY').addEventListener('input', (e) => {
-        document.getElementById('posYValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('size').addEventListener('input', (e) => {
-        document.getElementById('sizeValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('rotation').addEventListener('input', (e) => {
-        document.getElementById('rotationValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('opacity').addEventListener('input', (e) => {
-        document.getElementById('opacityValue').textContent = e.target.value;
-        draw();
-      });
-
-      document.getElementById('shapeType').addEventListener('change', (e) => {
-        object.shapeType = e.target.value;
-        draw();
-      });
-
-      document.getElementById('colorInput').addEventListener('change', (e) => {
-        object.color = e.target.value;
+      document.getElementById('timelineBar').addEventListener('click', (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        currentFrame = Math.round(percent * totalFrames);
+        updateDisplay();
         draw();
       });
 
@@ -711,16 +687,41 @@
         draw();
       });
 
-      document.getElementById('timelineBar').addEventListener('click', (e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const percent = Math.max(0, Math.min(1, x / rect.width));
-        currentFrame = Math.round(percent * totalFrames);
-        updateDisplay();
+      document.getElementById('shapeType').addEventListener('change', (e) => {
+        object.shapeType = e.target.value;
         draw();
       });
 
-      // Init
+      document.getElementById('colorInput').addEventListener('input', (e) => {
+        object.color = e.target.value;
+        draw();
+      });
+
+      document.getElementById('posX').addEventListener('input', (e) => {
+        document.getElementById('posXValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('posY').addEventListener('input', (e) => {
+        document.getElementById('posYValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('size').addEventListener('input', (e) => {
+        document.getElementById('sizeValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('rotation').addEventListener('input', (e) => {
+        document.getElementById('rotationValue').textContent = e.target.value;
+        draw();
+      });
+
+      document.getElementById('opacity').addEventListener('input', (e) => {
+        document.getElementById('opacityValue').textContent = e.target.value;
+        draw();
+      });
+
       renderKeyframes();
       updateDisplay();
       draw();
