@@ -5,680 +5,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Animation Studio & Games</title>
     <style>
-      :root {
-        --bg: #0a0e1a;
-        --bg-2: #0f1420;
-        --panel: rgba(15, 23, 42, 0.8);
-        --line: rgba(148, 163, 184, 0.15);
-        --text: #e2e8f0;
-        --muted: #94a3b8;
-        --purple: #8b5cf6;
-        --cyan: #22d3ee;
-        --green: #34d399;
-        --red: #ef4444;
-      }
+      :root { --bg:#0a0e1a;--bg-2:#0f1420;--panel:rgba(15,23,42,.8);--line:rgba(148,163,184,.15);--text:#e2e8f0;--muted:#94a3b8;--purple:#8b5cf6;--cyan:#22d3ee;--green:#34d399;--red:#ef4444; }
+      * { box-sizing:border-box; }
+      html,body { margin:0;padding:0;width:100%;height:100%;min-height:100vh;font-family:Inter,"Segoe UI",monospace;background:linear-gradient(135deg,var(--bg),var(--bg-2));color:var(--text);overflow:auto; }
+      body { display:flex; }
+      .home-menu { display:none;position:fixed;inset:0;background:linear-gradient(135deg,var(--bg),var(--bg-2));z-index:600;flex-direction:column;align-items:center;justify-content:center;padding:20px; }
+      .home-menu.active { display:flex; }
+      .home-content { text-align:center; }
+      .home-title { font-size:3.5rem;font-weight:700;margin-bottom:15px;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+      .home-subtitle { font-size:1.2rem;color:var(--muted);margin-bottom:40px; }
+      .home-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:25px;max-width:800px;margin:0 auto; }
+      .home-btn { padding:40px 25px;border:2px solid var(--purple);border-radius:12px;background:rgba(139,92,246,.1);color:var(--text);font-weight:700;font-size:1.2rem;cursor:pointer;transition:.2s ease;display:flex;flex-direction:column;align-items:center;gap:15px;width:100%;margin:0; }
+      .home-btn:hover { transform:scale(1.08);background:rgba(139,92,246,.2);box-shadow:0 12px 30px rgba(139,92,246,.3);border-color:var(--cyan); }
+      .home-icon { font-size:3rem; }
+      .studio,.game-view { display:none;width:100vw;height:100vh;background:var(--panel); }
+      .studio.active { display:grid;grid-template-rows:52px minmax(0,1fr); }
+      .topbar { display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(15,23,42,.9);border-bottom:1px solid var(--line); }
+      .topbar-left { display:flex;align-items:center;gap:15px; }
+      .topbar-home-btn { padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:rgba(34,211,238,.1);color:var(--cyan);font-weight:600;font-size:.75rem;cursor:pointer; }
+      .brand { display:flex;align-items:center;gap:10px;font-weight:700;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap; }
+      .brand-icon { width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--purple),var(--cyan));display:grid;place-items:center;color:white;font-size:.7rem; }
+      .workspace { display:grid;grid-template-columns:280px minmax(0,1fr) 220px;height:100%;gap:1px;background:var(--line); }
+      .sidebar { background:rgba(15,23,42,.95);padding:20px;overflow-y:auto;border-right:1px solid var(--line); }
+      .sidebar-section { margin-bottom:30px; }
+      .sidebar-title { font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px; }
+      .shape-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+      .shape-btn { padding:12px;border:1.5px solid var(--line);border-radius:8px;background:rgba(139,92,246,.05);color:var(--text);font-size:.85rem;cursor:pointer;min-height:50px;font-weight:600; }
+      .shape-btn:hover,.shape-btn.active { background:rgba(139,92,246,.3);border-color:var(--cyan); }
+      .color-picker { display:flex;gap:8px;margin-top:12px; }
+      .color-option { width:30px;height:30px;border-radius:6px;border:2px solid transparent;cursor:pointer; }
+      .color-option.active { border-color:var(--cyan);box-shadow:0 0 12px currentColor; }
+      .canvas-area { background:linear-gradient(135deg,var(--bg),var(--bg-2));position:relative;overflow:hidden; }
+      #drawingCanvas { display:block;cursor:crosshair;background:linear-gradient(135deg,var(--bg),var(--bg-2)); }
+      .right-panel { background:rgba(15,23,42,.95);padding:20px;overflow-y:auto;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:20px; }
+      .control-group,.slider-group { display:flex;flex-direction:column;gap:8px; }
+      .control-label { font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted); }
+      .control-btn,.back-btn-top { padding:10px;border:1px solid var(--line);border-radius:6px;background:rgba(139,92,246,.1);color:var(--text);font-weight:600;font-size:.8rem;cursor:pointer; }
+      .control-btn.danger { background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--red); }
+      input[type="range"] { width:100%;cursor:pointer; }
+      .slider-value { font-size:.8rem;color:var(--cyan);text-align:center; }
 
-      * { box-sizing: border-box; }
-
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        min-height: 100vh;
-        font-family: Inter, "Segoe UI", monospace;
-        background: linear-gradient(135deg, var(--bg), var(--bg-2));
-        color: var(--text);
-        overflow: auto;
-      }
-
-      body { display: flex; }
-
-      .home-menu {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, var(--bg), var(--bg-2));
-        z-index: 600;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-
-      .home-menu.active { display: flex; }
-
-      .home-content { text-align: center; }
-
-      .home-title {
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .home-subtitle {
-        font-size: 1.2rem;
-        color: var(--muted);
-        margin-bottom: 40px;
-      }
-
-      .home-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 25px;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-
-      .home-btn {
-        padding: 40px 25px;
-        border: 2px solid var(--purple);
-        border-radius: 12px;
-        background: rgba(139, 92, 246, 0.1);
-        color: var(--text);
-        font-weight: 700;
-        font-size: 1.2rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        width: 100%;
-        margin: 0;
-      }
-
-      .home-btn:hover {
-        transform: scale(1.08);
-        background: rgba(139, 92, 246, 0.2);
-        box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3);
-        border-color: var(--cyan);
-      }
-
-      .home-icon { font-size: 3rem; }
-
-      .studio {
-        display: none;
-        grid-template-rows: 52px minmax(0, 1fr);
-        width: 100vw;
-        height: 100vh;
-        background: var(--panel);
-      }
-
-      .studio.active { display: grid; }
-
-      .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 16px;
-        background: rgba(15, 23, 42, 0.9);
-        border-bottom: 1px solid var(--line);
-      }
-
-      .topbar-left {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .topbar-home-btn {
-        padding: 6px 12px;
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        background: rgba(34, 211, 238, 0.1);
-        color: var(--cyan);
-        font-weight: 600;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: 0.15s ease;
-      }
-
-      .topbar-home-btn:hover {
-        background: rgba(34, 211, 238, 0.2);
-        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2);
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        white-space: nowrap;
-      }
-
-      .brand-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 6px;
-        background: linear-gradient(135deg, var(--purple), var(--cyan));
-        display: grid;
-        place-items: center;
-        color: white;
-        font-size: 0.7rem;
-      }
-
-      .workspace {
-        display: grid;
-        grid-template-columns: 280px minmax(0, 1fr) 220px;
-        height: 100%;
-        gap: 1px;
-        background: var(--line);
-      }
-
-      .sidebar {
-        background: rgba(15, 23, 42, 0.95);
-        padding: 20px;
-        overflow-y: auto;
-        border-right: 1px solid var(--line);
-      }
-
-      .sidebar-section {
-        margin-bottom: 30px;
-      }
-
-      .sidebar-title {
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--muted);
-        margin-bottom: 12px;
-      }
-
-      .shape-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-
-      .shape-btn {
-        padding: 12px;
-        border: 1.5px solid var(--line);
-        border-radius: 8px;
-        background: rgba(139, 92, 246, 0.05);
-        color: var(--text);
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 50px;
-        font-weight: 600;
-      }
-
-      .shape-btn:hover {
-        background: rgba(139, 92, 246, 0.15);
-        border-color: var(--purple);
-        transform: translateY(-2px);
-      }
-
-      .shape-btn.active {
-        background: rgba(139, 92, 246, 0.3);
-        border-color: var(--cyan);
-        box-shadow: 0 0 12px rgba(34, 211, 238, 0.3);
-      }
-
-      .color-picker {
-        display: flex;
-        gap: 8px;
-        margin-top: 12px;
-      }
-
-      .color-option {
-        width: 30px;
-        height: 30px;
-        border-radius: 6px;
-        border: 2px solid transparent;
-        cursor: pointer;
-        transition: all 0.15s ease;
-      }
-
-      .color-option:hover {
-        transform: scale(1.1);
-      }
-
-      .color-option.active {
-        border-color: var(--cyan);
-        box-shadow: 0 0 12px currentColor;
-      }
-
-      .canvas-area {
-        background: linear-gradient(135deg, var(--bg), var(--bg-2));
-        position: relative;
-        overflow: hidden;
-      }
-
-      #drawingCanvas {
-        display: block;
-        cursor: crosshair;
-        background: linear-gradient(135deg, var(--bg), var(--bg-2));
-      }
-
-      .right-panel {
-        background: rgba(15, 23, 42, 0.95);
-        padding: 20px;
-        overflow-y: auto;
-        border-left: 1px solid var(--line);
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .control-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .control-label {
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--muted);
-      }
-
-      .control-btn {
-        padding: 10px;
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        background: rgba(139, 92, 246, 0.1);
-        color: var(--text);
-        font-weight: 600;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: all 0.15s ease;
-      }
-
-      .control-btn:hover {
-        background: rgba(139, 92, 246, 0.2);
-        border-color: var(--purple);
-      }
-
-      .control-btn.danger {
-        background: rgba(239, 68, 68, 0.1);
-        border-color: rgba(239, 68, 68, 0.3);
-        color: var(--red);
-      }
-
-      .control-btn.danger:hover {
-        background: rgba(239, 68, 68, 0.2);
-        border-color: var(--red);
-      }
-
-      .slider-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      input[type="range"] {
-        width: 100%;
-        cursor: pointer;
-      }
-
-      .slider-value {
-        font-size: 0.8rem;
-        color: var(--cyan);
-        text-align: center;
-      }
-
-      .back-btn-top {
-        padding: 8px 14px;
-        border: 1px solid var(--red);
-        border-radius: 6px;
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--red);
-        font-weight: 600;
-        font-size: 0.7rem;
-        cursor: pointer;
-        transition: 0.15s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .back-btn-top:hover {
-        background: rgba(239, 68, 68, 0.2);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-      }
+      .game-view.active { display:flex;flex-direction:column; }
+      .game-screen { flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#07111f,#101a2e); }
+      #flappyCanvas,#snakeCanvas { width:min(92vw,720px);height:min(calc(100vh - 120px),720px);max-height:720px;border:2px solid rgba(34,211,238,.35);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.45);touch-action:none;background:#0d1b30; }
+      .game-controls { position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:5; }
+      .game-controls button { padding:10px 16px;border:1px solid var(--cyan);border-radius:8px;background:rgba(34,211,238,.12);color:var(--text);font-weight:700;cursor:pointer; }
+      .game-touch-pad { display:none;position:absolute;inset:auto 0 18px 0;justify-content:center;gap:10px;z-index:6;pointer-events:none; }
+      .game-touch-pad button { pointer-events:auto;width:64px;height:64px;border:1px solid var(--cyan);border-radius:50%;background:rgba(34,211,238,.18);color:white;font-size:1.4rem; }
+      @media (max-width:900px) { .workspace{grid-template-columns:150px minmax(0,1fr) 150px}.home-title{font-size:2.4rem}.game-touch-pad{display:flex} }
     </style>
   </head>
   <body>
-    <!-- HOME MENU -->
     <div class="home-menu active" id="homeMenu">
-      <div class="home-content">
-        <div class="home-title">✨ Studio & Games</div>
-        <div class="home-subtitle">Create, Draw & Play</div>
+      <div class="home-content"><div class="home-title">✨ Studio & Games</div><div class="home-subtitle">Create, Draw & Play</div>
         <div class="home-grid">
-          <button class="home-btn" onclick="goToStudio()">
-            <span class="home-icon">🎨</span>
-            Drawing Studio
-          </button>
-          <button class="home-btn" onclick="goToFlappyBird()">
-            <span class="home-icon">🐦</span>
-            Flappy Bird
-          </button>
-          <button class="home-btn" onclick="goToSnake()">
-            <span class="home-icon">🐍</span>
-            Snake Game
-          </button>
+          <button class="home-btn" onclick="goToStudio()"><span class="home-icon">🎨</span>Drawing Studio</button>
+          <button class="home-btn" onclick="goToFlappyBird()"><span class="home-icon">🐦</span>Flappy Bird</button>
+          <button class="home-btn" onclick="goToSnake()"><span class="home-icon">🐍</span>Snake Game</button>
         </div>
       </div>
     </div>
 
-    <!-- STUDIO -->
     <div class="studio active" id="studioView">
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-home-btn" onclick="goToHome()">← HOME</button>
-          <div class="brand">
-            <div class="brand-icon">✨</div>
-            <span>Drawing Studio</span>
-          </div>
-        </div>
-      </div>
-
+      <div class="topbar"><div class="topbar-left"><button class="topbar-home-btn" onclick="goToHome()">← HOME</button><div class="brand"><div class="brand-icon">✨</div><span>Drawing Studio</span></div></div></div>
       <div class="workspace">
-        <!-- LEFT SIDEBAR -->
-        <div class="sidebar">
-          <div class="sidebar-section">
-            <div class="sidebar-title">Drawing Tools</div>
-            <div class="shape-grid">
-              <button class="shape-btn active" data-tool="pen" onclick="selectTool('pen', this)">✏️ Pen</button>
-              <button class="shape-btn" data-tool="line" onclick="selectTool('line', this)">📏 Line</button>
-              <button class="shape-btn" data-tool="rect" onclick="selectTool('rect', this)">▭ Rectangle</button>
-              <button class="shape-btn" data-tool="circle" onclick="selectTool('circle', this)">● Circle</button>
-              <button class="shape-btn" data-tool="triangle" onclick="selectTool('triangle', this)">△ Triangle</button>
-              <button class="shape-btn" data-tool="arrow" onclick="selectTool('arrow', this)">→ Arrow</button>
-            </div>
-          </div>
-
-          <div class="sidebar-section">
-            <div class="sidebar-title">Colors</div>
-            <div class="color-picker">
-              <div class="color-option active" style="background: #ffffff;" onclick="selectColor('#ffffff', this)"></div>
-              <div class="color-option" style="background: #ef4444;" onclick="selectColor('#ef4444', this)"></div>
-              <div class="color-option" style="background: #22d3ee;" onclick="selectColor('#22d3ee', this)"></div>
-              <div class="color-option" style="background: #8b5cf6;" onclick="selectColor('#8b5cf6', this)"></div>
-              <div class="color-option" style="background: #34d399;" onclick="selectColor('#34d399', this)"></div>
-            </div>
-          </div>
-
-          <div class="sidebar-section">
-            <div class="sidebar-title">Stroke Size</div>
-            <div class="slider-group">
-              <input type="range" id="strokeSize" min="1" max="50" value="2" oninput="updateStrokeSize(this.value)">
-              <span class="slider-value" id="strokeValue">2px</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- CANVAS AREA -->
-        <div class="canvas-area">
-          <canvas id="drawingCanvas"></canvas>
-        </div>
-
-        <!-- RIGHT PANEL -->
-        <div class="right-panel">
-          <div class="control-group">
-            <div class="control-label">Canvas</div>
-            <button class="control-btn" onclick="undoDrawing()">↶ Undo</button>
-            <button class="control-btn danger" onclick="clearCanvas()">🗑️ Clear All</button>
-          </div>
-
-          <div class="control-group">
-            <div class="control-label">Export</div>
-            <button class="control-btn" onclick="downloadCanvas()">⬇️ Download</button>
-            <button class="control-btn" onclick="copyCanvas()">📋 Copy</button>
-          </div>
-
-          <div class="control-group">
-            <div class="control-label">Navigation</div>
-            <button class="back-btn-top" onclick="goToHome()">← Back to Home</button>
-          </div>
-        </div>
+        <div class="sidebar"><div class="sidebar-section"><div class="sidebar-title">Drawing Tools</div><div class="shape-grid">
+          <button class="shape-btn active" data-tool="pen" onclick="selectTool('pen',this)">✏️ Pen</button><button class="shape-btn" data-tool="line" onclick="selectTool('line',this)">📏 Line</button><button class="shape-btn" data-tool="rect" onclick="selectTool('rect',this)">▭ Rectangle</button><button class="shape-btn" data-tool="circle" onclick="selectTool('circle',this)">● Circle</button><button class="shape-btn" data-tool="triangle" onclick="selectTool('triangle',this)">△ Triangle</button><button class="shape-btn" data-tool="arrow" onclick="selectTool('arrow',this)">→ Arrow</button>
+        </div></div><div class="sidebar-section"><div class="sidebar-title">Colors</div><div class="color-picker"><div class="color-option active" style="background:#fff" onclick="selectColor('#fff',this)"></div><div class="color-option" style="background:#ef4444" onclick="selectColor('#ef4444',this)"></div><div class="color-option" style="background:#22d3ee" onclick="selectColor('#22d3ee',this)"></div><div class="color-option" style="background:#8b5cf6" onclick="selectColor('#8b5cf6',this)"></div><div class="color-option" style="background:#34d399" onclick="selectColor('#34d399',this)"></div></div></div><div class="sidebar-section"><div class="sidebar-title">Stroke Size</div><div class="slider-group"><input type="range" id="strokeSize" min="1" max="50" value="2" oninput="updateStrokeSize(this.value)"><span class="slider-value" id="strokeValue">2px</span></div></div></div>
+        <div class="canvas-area"><canvas id="drawingCanvas"></canvas></div>
+        <div class="right-panel"><div class="control-group"><div class="control-label">Canvas</div><button class="control-btn" onclick="undoDrawing()">↶ Undo</button><button class="control-btn danger" onclick="clearCanvas()">🗑️ Clear All</button></div><div class="control-group"><div class="control-label">Export</div><button class="control-btn" onclick="downloadCanvas()">⬇️ Download</button><button class="control-btn" onclick="copyCanvas()">📋 Copy</button></div><div class="control-group"><div class="control-label">Navigation</div><button class="control-btn danger" onclick="goToHome()">← Back to Home</button></div></div>
       </div>
     </div>
+
+    <div class="game-view" id="flappyView"><div class="topbar"><div class="topbar-left"><button class="topbar-home-btn" onclick="goToHome()">← HOME</button><div class="brand"><div class="brand-icon">🐦</div><span>Flappy Bird</span></div></div></div><div class="game-screen"><canvas id="flappyCanvas" width="720" height="720"></canvas><div class="game-controls"><button onclick="restartFlappy()">Restart</button></div></div></div>
+    <div class="game-view" id="snakeView"><div class="topbar"><div class="topbar-left"><button class="topbar-home-btn" onclick="goToHome()">← HOME</button><div class="brand"><div class="brand-icon">🐍</div><span>Snake Game</span></div></div></div><div class="game-screen"><canvas id="snakeCanvas" width="720" height="720"></canvas><div class="game-controls"><button onclick="restartSnake()">Restart</button></div><div class="game-touch-pad" id="snakePad"><button onclick="setSnakeDirection(0,-1)">▲</button><button onclick="setSnakeDirection(-1,0)">◀</button><button onclick="setSnakeDirection(1,0)">▶</button><button onclick="setSnakeDirection(0,1)">▼</button></div></div></div>
 
     <script>
-      // Canvas Setup
-      const canvas = document.getElementById('drawingCanvas');
-      const ctx = canvas.getContext('2d');
-      const homeMenu = document.getElementById('homeMenu');
-      const studioView = document.getElementById('studioView');
+      const canvas=document.getElementById('drawingCanvas'),ctx=canvas.getContext('2d'),homeMenu=document.getElementById('homeMenu'),studioView=document.getElementById('studioView');
+      let isDrawing=false,currentTool='pen',currentColor='#fff',strokeSize=2,startX,startY;const history=[];
+      function resizeCanvas(){const area=canvas.parentElement;canvas.width=area.clientWidth;canvas.height=area.clientHeight;ctx.fillStyle='rgba(10,14,26,.5)';ctx.fillRect(0,0,canvas.width,canvas.height)}
+      window.addEventListener('resize',resizeCanvas);resizeCanvas();
+      function saveState(){history.push(canvas.toDataURL());if(history.length>20)history.shift()}
+      function drawLine(x1,y1,x2,y2){ctx.strokeStyle=currentColor;ctx.lineWidth=strokeSize;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
+      function drawRect(x1,y1,x2,y2){ctx.strokeStyle=currentColor;ctx.lineWidth=strokeSize;ctx.strokeRect(x1,y1,x2-x1,y2-y1)}
+      function drawCircle(x1,y1,x2,y2){ctx.strokeStyle=currentColor;ctx.lineWidth=strokeSize;ctx.beginPath();ctx.arc(x1,y1,Math.hypot(x2-x1,y2-y1),0,Math.PI*2);ctx.stroke()}
+      function drawTriangle(x1,y1,x2,y2){ctx.strokeStyle=currentColor;ctx.lineWidth=strokeSize;ctx.beginPath();ctx.moveTo((x1+x2)/2,y1);ctx.lineTo(x1,y2);ctx.lineTo(x2,y2);ctx.closePath();ctx.stroke()}
+      function drawArrow(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=15;ctx.strokeStyle=currentColor;ctx.fillStyle=currentColor;ctx.lineWidth=strokeSize;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-Math.PI/6),y2-h*Math.sin(a-Math.PI/6));ctx.lineTo(x2-h*Math.cos(a+Math.PI/6),y2-h*Math.sin(a+Math.PI/6));ctx.closePath();ctx.fill()}
+      canvas.addEventListener('mousedown',e=>{isDrawing=true;const r=canvas.getBoundingClientRect();startX=e.clientX-r.left;startY=e.clientY-r.top;saveState()});
+      canvas.addEventListener('mousemove',e=>{if(!isDrawing)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(history.length){const im=new Image();im.src=history[history.length-1];im.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(im,0,0);drawCurrentShape(startX,startY,x,y)}}});
+      canvas.addEventListener('mouseup',()=>isDrawing=false);canvas.addEventListener('mouseleave',()=>isDrawing=false);
+      function drawCurrentShape(x1,y1,x2,y2){if(currentTool==='pen'||currentTool==='line')drawLine(x1,y1,x2,y2);else if(currentTool==='rect')drawRect(x1,y1,x2,y2);else if(currentTool==='circle')drawCircle(x1,y1,x2,y2);else if(currentTool==='triangle')drawTriangle(x1,y1,x2,y2);else if(currentTool==='arrow')drawArrow(x1,y1,x2,y2)}
+      function selectTool(t,e){currentTool=t;document.querySelectorAll('.shape-btn').forEach(b=>b.classList.remove('active'));e.classList.add('active')}
+      function selectColor(c,e){currentColor=c;document.querySelectorAll('.color-option').forEach(o=>o.classList.remove('active'));e.classList.add('active')}
+      function updateStrokeSize(v){strokeSize=+v;document.getElementById('strokeValue').textContent=v+'px'}
+      function undoDrawing(){if(history.length>1){history.pop();const im=new Image();im.src=history[history.length-1];im.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(im,0,0)}}}
+      function clearCanvas(){if(confirm('Clear all drawings?')){ctx.clearRect(0,0,canvas.width,canvas.height);history.length=0;saveState()}}
+      function downloadCanvas(){const a=document.createElement('a');a.href=canvas.toDataURL();a.download='drawing.png';a.click()}
+      async function copyCanvas(){try{const b=await new Promise(r=>canvas.toBlob(r));await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);alert('Drawing copied to clipboard!')}catch(e){alert('Clipboard access was unavailable. Use Download instead.')}}
 
-      let isDrawing = false;
-      let currentTool = 'pen';
-      let currentColor = '#ffffff';
-      let strokeSize = 2;
-      let startX, startY;
-      const history = [];
+      const flappyView=document.getElementById('flappyView'),snakeView=document.getElementById('snakeView');
+      let flappyLoop=null,snakeLoop=null;
+      function stopGames(){if(flappyLoop)cancelAnimationFrame(flappyLoop);if(snakeLoop)clearInterval(snakeLoop);flappyLoop=null;snakeLoop=null}
+      function hideAll(){homeMenu.classList.remove('active');studioView.classList.remove('active');flappyView.classList.remove('active');snakeView.classList.remove('active')}
+      function goToHome(){stopGames();hideAll();homeMenu.classList.add('active')}
+      function goToStudio(){stopGames();hideAll();studioView.classList.add('active');setTimeout(resizeCanvas,100)}
 
-      // Canvas Resize & Setup
-      function resizeCanvas() {
-        const canvasArea = canvas.parentElement;
-        canvas.width = canvasArea.clientWidth;
-        canvas.height = canvasArea.clientHeight;
-        ctx.fillStyle = 'rgba(10, 14, 26, 0.5)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
+      // Flappy Bird
+      const fc=document.getElementById('flappyCanvas'),fctx=fc.getContext('2d');let bird,pipes,flappyScore,flappyOver,flappyStarted;
+      function restartFlappy(){bird={x:170,y:340,vy:0,r:18};pipes=[];flappyScore=0;flappyOver=false;flappyStarted=false;if(flappyLoop)cancelAnimationFrame(flappyLoop);flappyLoop=requestAnimationFrame(flappyFrame)}
+      function flap(){if(flappyOver){restartFlappy();return}bird.vy=-7.2;flappyStarted=true}
+      fc.addEventListener('pointerdown',flap);window.addEventListener('keydown',e=>{if(flappyView.classList.contains('active')&&(e.code==='Space'||e.code==='ArrowUp')){e.preventDefault();flap()}});
+      function flappyFrame(){fctx.fillStyle='#0d1b30';fctx.fillRect(0,0,720,720);fctx.fillStyle='#172a46';for(let x=0;x<720;x+=80){fctx.fillRect(x,620+(x%160===0?10:-10),70,120)}
+        if(flappyStarted&&!flappyOver){bird.vy+=0.38;bird.y+=bird.vy;if(pipes.length===0||pipes[pipes.length-1].x<480)pipes.push({x:720,gap:Math.floor(150+Math.random()*150),top:Math.floor(80+Math.random()*330),passed:false})}
+        pipes.forEach(p=>{if(flappyStarted&&!flappyOver)p.x-=3.3;fctx.fillStyle='#34d399';fctx.fillRect(p.x,0,90,p.top);fctx.fillRect(p.x,p.top+p.gap,90,720-p.top-p.gap);if(!p.passed&&p.x+90<bird.x){p.passed=true;flappyScore++}if(bird.x+bird.r>p.x&&bird.x-bird.r<p.x+90&&(bird.y-bird.r<p.top||bird.y+bird.r>p.top+p.gap))flappyOver=true});
+        pipes=pipes.filter(p=>p.x>-100);if(bird.y+bird.r>720||bird.y-bird.r<0)flappyOver=true;fctx.fillStyle='#fbbf24';fctx.beginPath();fctx.arc(bird.x,bird.y,bird.r,0,Math.PI*2);fctx.fill();fctx.fillStyle='#fff';fctx.font='bold 36px monospace';fctx.fillText(flappyScore,24,50);
+        if(!flappyStarted){fctx.textAlign='center';fctx.fillText('Press Space or tap to flap',360,300);fctx.textAlign='left'}if(flappyOver){fctx.fillStyle='rgba(0,0,0,.65)';fctx.fillRect(0,0,720,720);fctx.fillStyle='#fff';fctx.textAlign='center';fctx.fillText('Game Over',360,330);fctx.font='24px monospace';fctx.fillText('Tap or press Space to restart',360,375);fctx.textAlign='left'}flappyLoop=requestAnimationFrame(flappyFrame)}
+      function goToFlappyBird(){stopGames();hideAll();flappyView.classList.add('active');restartFlappy()}
 
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-
-      // Save state for undo
-      function saveState() {
-        history.push(canvas.toDataURL());
-        if (history.length > 20) history.shift();
-      }
-
-      // Drawing Functions
-      function drawLine(fromX, fromY, toX, toY) {
-        ctx.strokeStyle = currentColor;
-        ctx.lineWidth = strokeSize;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.stroke();
-      }
-
-      function drawRect(fromX, fromY, toX, toY) {
-        const width = toX - fromX;
-        const height = toY - fromY;
-        ctx.strokeStyle = currentColor;
-        ctx.lineWidth = strokeSize;
-        ctx.strokeRect(fromX, fromY, width, height);
-      }
-
-      function drawCircle(fromX, fromY, toX, toY) {
-        const radius = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
-        ctx.strokeStyle = currentColor;
-        ctx.lineWidth = strokeSize;
-        ctx.beginPath();
-        ctx.arc(fromX, fromY, radius, 0, 2 * Math.PI);
-        ctx.stroke();
-      }
-
-      function drawTriangle(fromX, fromY, toX, toY) {
-        const midX = (fromX + toX) / 2;
-        const midY = fromY;
-        ctx.strokeStyle = currentColor;
-        ctx.lineWidth = strokeSize;
-        ctx.beginPath();
-        ctx.moveTo(midX, midY);
-        ctx.lineTo(fromX, toY);
-        ctx.lineTo(toX, toY);
-        ctx.closePath();
-        ctx.stroke();
-      }
-
-      function drawArrow(fromX, fromY, toX, toY) {
-        const headlen = 15;
-        const angle = Math.atan2(toY - fromY, toX - fromX);
-        
-        ctx.strokeStyle = currentColor;
-        ctx.fillStyle = currentColor;
-        ctx.lineWidth = strokeSize;
-        
-        // Draw line
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.stroke();
-        
-        // Draw arrowhead
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      // Mouse Events
-      canvas.addEventListener('mousedown', (e) => {
-        isDrawing = true;
-        const rect = canvas.getBoundingClientRect();
-        startX = e.clientX - rect.left;
-        startY = e.clientY - rect.top;
-        saveState();
-      });
-
-      canvas.addEventListener('mousemove', (e) => {
-        if (!isDrawing) return;
-        
-        const rect = canvas.getBoundingClientRect();
-        const currentX = e.clientX - rect.left;
-        const currentY = e.clientY - rect.top;
-        
-        // Restore last state for preview
-        if (history.length > 0) {
-          const img = new Image();
-          img.src = history[history.length - 1];
-          img.onload = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-            drawCurrentShape(startX, startY, currentX, currentY);
-          };
-        }
-      });
-
-      canvas.addEventListener('mouseup', () => {
-        isDrawing = false;
-      });
-
-      canvas.addEventListener('mouseleave', () => {
-        isDrawing = false;
-      });
-
-      function drawCurrentShape(fromX, fromY, toX, toY) {
-        switch (currentTool) {
-          case 'pen':
-            drawLine(fromX, fromY, toX, toY);
-            break;
-          case 'line':
-            drawLine(fromX, fromY, toX, toY);
-            break;
-          case 'rect':
-            drawRect(fromX, fromY, toX, toY);
-            break;
-          case 'circle':
-            drawCircle(fromX, fromY, toX, toY);
-            break;
-          case 'triangle':
-            drawTriangle(fromX, fromY, toX, toY);
-            break;
-          case 'arrow':
-            drawArrow(fromX, fromY, toX, toY);
-            break;
-        }
-      }
-
-      // UI Functions
-      function selectTool(tool, element) {
-        currentTool = tool;
-        document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('active'));
-        element.classList.add('active');
-      }
-
-      function selectColor(color, element) {
-        currentColor = color;
-        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
-        element.classList.add('active');
-      }
-
-      function updateStrokeSize(value) {
-        strokeSize = value;
-        document.getElementById('strokeValue').textContent = value + 'px';
-      }
-
-      function undoDrawing() {
-        if (history.length > 1) {
-          history.pop();
-          const img = new Image();
-          img.src = history[history.length - 1];
-          img.onload = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-          };
-        }
-      }
-
-      function clearCanvas() {
-        if (confirm('Clear all drawings?')) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          history.length = 0;
-          saveState();
-        }
-      }
-
-      function downloadCanvas() {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL();
-        link.download = 'drawing.png';
-        link.click();
-      }
-
-      function copyCanvas() {
-        canvas.toBlob(blob => {
-          navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-          alert('Drawing copied to clipboard!');
-        });
-      }
-
-      // Navigation
-      function goToHome() {
-        homeMenu.classList.add('active');
-        studioView.classList.remove('active');
-      }
-
-      function goToStudio() {
-        homeMenu.classList.remove('active');
-        studioView.classList.add('active');
-        setTimeout(resizeCanvas, 100);
-      }
-
-      function goToFlappyBird() {
-        alert('🐦 Flappy Bird coming soon!');
-      }
-
-      function goToSnake() {
-        alert('🐍 Snake Game coming soon!');
-      }
+      // Snake
+      const sc=document.getElementById('snakeCanvas'),sctx=sc.getContext('2d'),grid=24,cell=30;let snake,food,snakeDx,snakeDy,snakeScore,snakeOver,snakeNextDx,snakeNextDy;
+      function restartSnake(){snake=[{x:12,y:12},{x:11,y:12},{x:10,y:12}];snakeDx=1;snakeDy=0;snakeNextDx=1;snakeNextDy=0;snakeScore=0;snakeOver=false;placeFood();if(snakeLoop)clearInterval(snakeLoop);snakeLoop=setInterval(snakeTick,105)}
+      function placeFood(){do{food={x:Math.floor(Math.random()*grid),y:Math.floor(Math.random()*grid)}}while(snake?.some(s=>s.x===food.x&&s.y===food.y))}
+      function setSnakeDirection(dx,dy){if(dx===-snakeDx&&dy===-snakeDy)return;snakeNextDx=dx;snakeNextDy=dy}
+      function snakeTick(){if(snakeOver){drawSnake();return}snakeDx=snakeNextDx;snakeDy=snakeNextDy;const head={x:snake[0].x+snakeDx,y:snake[0].y+snakeDy};if(head.x<0||head.x>=grid||head.y<0||head.y>=grid||snake.some(s=>s.x===head.x&&s.y===head.y)){snakeOver=true;drawSnake();return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){snakeScore++;placeFood()}else snake.pop();drawSnake()}
+      function drawSnake(){sctx.fillStyle='#091426';sctx.fillRect(0,0,720,720);sctx.strokeStyle='rgba(148,163,184,.08)';for(let i=0;i<grid;i++){sctx.beginPath();sctx.moveTo(i*cell,0);sctx.lineTo(i*cell,720);sctx.stroke();sctx.beginPath();sctx.moveTo(0,i*cell);sctx.lineTo(720,i*cell);sctx.stroke()}sctx.fillStyle='#ef4444';sctx.fillRect(food.x*cell+4,food.y*cell+4,cell-8,cell-8);snake.forEach((s,i)=>{sctx.fillStyle=i===0?'#22d3ee':'#34d399';sctx.fillRect(s.x*cell+2,s.y*cell+2,cell-4,cell-4)});sctx.fillStyle='#fff';sctx.font='bold 28px monospace';sctx.fillText('Score: '+snakeScore,18,38);if(snakeOver){sctx.fillStyle='rgba(0,0,0,.65)';sctx.fillRect(0,0,720,720);sctx.textAlign='center';sctx.fillText('Game Over',360,340);sctx.font='24px monospace';sctx.fillText('Press Restart',360,380);sctx.textAlign='left'}}
+      window.addEventListener('keydown',e=>{if(!snakeView.classList.contains('active'))return;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();if(e.key==='ArrowUp')setSnakeDirection(0,-1);if(e.key==='ArrowDown')setSnakeDirection(0,1);if(e.key==='ArrowLeft')setSnakeDirection(-1,0);if(e.key==='ArrowRight')setSnakeDirection(1,0)});
+      let snakeTouch=null;sc.addEventListener('pointerdown',e=>{snakeTouch={x:e.clientX,y:e.clientY}});sc.addEventListener('pointerup',e=>{if(!snakeTouch)return;const dx=e.clientX-snakeTouch.x,dy=e.clientY-snakeTouch.y;if(Math.abs(dx)>Math.abs(dy))setSnakeDirection(dx>0?1:-1,0);else setSnakeDirection(0,dy>0?1:-1);snakeTouch=null});
+      function goToSnake(){stopGames();hideAll();snakeView.classList.add('active');restartSnake()}
     </script>
   </body>
 </html>
